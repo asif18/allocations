@@ -1,0 +1,127 @@
+<div class="main-content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-12">
+          <mat-card class="mat-elevation-z8 mat-card mt-0">
+            
+            <div class="row">
+              <div class="col-md-1 ml-auto text-right icon-container" [ngClass]="{'disabled': !data.length}">
+                <fa-icon [icon]="faIcons.faFileExcel" size="2x" class="purple-900"
+                 (click)="openBottomSheet()" matTooltip="Export as excel"></fa-icon>
+              </div>
+              <div class="col-md-4">
+                <form>
+                  <mat-form-field [floatLabel]="'never'">
+                    <input matInput placeholder="Search" #searchInput />
+                    <button mat-button *ngIf="searchInput.value" matSuffix mat-icon-button (click)="resetSearchValue()">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  </mat-form-field>
+                </form>
+              </div>
+            </div>
+  
+            <div class="table-container">
+              <app-preloader [showPreLoader]="isFormLoading" [showNoRecordsMessage]="!data.length"></app-preloader>
+              <table mat-table [dataSource]="data" matSort matSortActive="datetime" 
+                matSortDisableClear matSortDirection="desc">
+                
+                <!-- ID Column -->
+                <ng-container matColumnDef="id">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header class="text-center">ID</th>
+                  <td mat-cell *matCellDef="let row" class="text-center">{{row.id}}</td>
+                </ng-container>
+
+                <!-- Name Column -->
+                <ng-container matColumnDef="name">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header class="text-center">Instance Name</th>
+                  <td mat-cell *matCellDef="let row" class="text-center">{{row.name}}</td>
+                </ng-container>
+
+                <!-- Business Name Column -->
+                <ng-container matColumnDef="businessName">
+                  <th mat-header-cell *matHeaderCellDef class="text-center">Business Name</th>
+                  <td mat-cell *matCellDef="let row" class="text-center">{{row.businessName}}</td>
+                </ng-container>
+
+                <!-- IP Column -->
+                <ng-container matColumnDef="mik_ip">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header class="text-center">IP</th>
+                  <td mat-cell *matCellDef="let row" class="text-center">{{row.mikIp}}</td>
+                </ng-container>
+          
+                <!-- Port Column -->
+                <ng-container matColumnDef="prt">
+                  <th mat-header-cell *matHeaderCellDef class="text-center">Port</th>
+                  <td mat-cell *matCellDef="let row" class="text-center">{{row.mikPort}}</td>
+                </ng-container>
+          
+                <!-- Username Column -->
+                <ng-container matColumnDef="uname">
+                  <th mat-header-cell *matHeaderCellDef class="text-center">Username</th>
+                  <td mat-cell *matCellDef="let row" class="text-center">{{row.mikUsername}}</td>
+                </ng-container>
+
+                <!-- Password Column -->
+                <ng-container matColumnDef="pwd">
+                  <th mat-header-cell *matHeaderCellDef class="text-center">Password</th>
+                  <td mat-cell *matCellDef="let row" class="text-center">{{ decryptPassword(row.mikPassword) }}</td>
+                </ng-container>
+  
+                <!-- LAN IP Column -->
+                <ng-container matColumnDef="mik_lan_ip">
+                  <th mat-header-cell *matHeaderCellDef class="text-center">LAN IP</th>
+                  <td mat-cell *matCellDef="let row" class="text-center">{{row.mikLanIp}}</td>
+                </ng-container>
+
+                <!-- DNS IP Column -->
+                <ng-container matColumnDef="mik_dns_ip">
+                  <th mat-header-cell *matHeaderCellDef class="text-center">DNS IP</th>
+                  <td mat-cell *matCellDef="let row" class="text-center">{{row.mikDnsIp}}</td>
+                </ng-container>
+
+                <!-- DNS Port Column -->
+                <ng-container matColumnDef="mik_dns_port">
+                  <th mat-header-cell *matHeaderCellDef class="text-center">DNS Port</th>
+                  <td mat-cell *matCellDef="let row" class="text-center">{{row.mikDnsPort}}</td>
+                </ng-container>
+  
+                <!-- Destination Column -->
+                <ng-container matColumnDef="dest">
+                  <th mat-header-cell *matHeaderCellDef class="text-center">Destination</th>
+                  <td mat-cell *matCellDef="let row" class="text-center">{{row.destination}}</td>
+                </ng-container>
+
+                <!-- datetime Column -->
+                <ng-container matColumnDef="datetime">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear class="text-center">Created</th>
+                  <td mat-cell *matCellDef="let row" class="text-center">{{row.date}}</td>
+                </ng-container>
+                
+                <ng-container matColumnDef="edit">
+                  <th mat-header-cell *matHeaderCellDef class="text-center">Action</th>
+                  <td mat-cell *matCellDef="let element" class="text-center">
+                    <button mat-icon-button [matMenuTriggerFor]="menu">
+                      <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <mat-menu #menu="matMenu">
+                      <button mat-menu-item color="warn" (click)="navigate(element.id)">
+                        <mat-icon>edit</mat-icon>
+                        <span>Edit</span>
+                      </button>
+                    </mat-menu>
+                  </td>
+                </ng-container>
+  
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+              </table>
+
+              <mat-paginator [length]="resultsLength" [pageSizeOptions]="[10, 20, 30, 40, 50]"></mat-paginator>
+            </div>
+  
+          </mat-card>
+        </div>
+      </div>
+    </div>
+  </div>

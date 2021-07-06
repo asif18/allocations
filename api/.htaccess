@@ -1,0 +1,13 @@
+RewriteEngine On
+
+# send request via index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php?/$1 [L]
+
+Header set Access-Control-Allow-Origin "*"
+Header add Access-Control-Allow-Methods "GET, POST, OPTIONS"
+Header set Access-Control-Allow-Headers "Content-Type, authorization"
+Header set Access-Control-Expose-Headers "Content-Disposition"
+
+SetEnv CI_ENV testing

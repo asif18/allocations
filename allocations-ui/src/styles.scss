@@ -1,0 +1,108 @@
+
+@import "./assets/scss/material-dashboard.scss";
+
+@font-face {
+  font-family: 'Ubuntu';
+  src: url('./assets/fonts/Ubuntu-Regular.ttf');
+}
+
+* {
+  font-family: "Ubuntu", sans-serif;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0; 
+  background: #FFF;
+}
+
+.mat-snack-bar-container.info {
+  background: #2979FF;
+  color: #FFF;
+
+  .mat-simple-snackbar-action {
+    color: #FFF;
+  }
+}
+
+.mat-snack-bar-container.success {
+  background: #7CB342;
+  color: #FFF;
+
+  .mat-simple-snackbar-action {
+    color: #FFF;
+  }
+}
+
+.mat-snack-bar-container.warning {
+  background: #FF9100;
+  color: #FFF;
+
+  .mat-simple-snackbar-action {
+    color: #FFF;
+  }
+}
+
+.mat-snack-bar-container.danger {
+  background: #d50000;
+  color: #FFF;
+
+  .mat-simple-snackbar-action {
+    color: #FFF;
+  }
+}
+
+mat-card-content {
+  padding: 15px;
+}
+
+
+.table-container {
+  position: relative;
+  max-height: 400px;
+  overflow: auto;
+}
+
+table {
+  width: 100%;
+}
+
+.mat-header-cell {
+  font-size: 14px;
+}
+
+fa-icon.purple-900 {
+  color: $purple-900;
+}
+
+
+.mat-menu-item {
+  font-size: 14px;
+
+  mat-icon {
+    font-size: 18px;
+    margin-right: 5px !important;
+  }
+}
+
+.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.badge {
+  font-size: inherit
+}
+
+td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
+  border-width: 1px;
+  border-style: solid;
+}
+
+mat-footer-row, mat-header-row, mat-row, td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
+  border-color: rgba(0,0,0,.12);
+}

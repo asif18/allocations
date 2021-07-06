@@ -1,0 +1,87 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <mat-card class="mat-elevation-z8 mat-card mt-0">
+          
+          <div class="row">
+            <div class="col-lg-12">
+              <form>
+                <mat-form-field [floatLabel]="'never'">
+                  <input matInput placeholder="Search" #searchInput (keyup)="applyFilter($event.target.value)" [disabled]="!data" />
+                  <button mat-button *ngIf="searchInput.value" matSuffix mat-icon-button (click)="resetSearchValue()">
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </mat-form-field>
+              </form>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <app-preloader [showPreLoader]="isFormLoading" [showNoRecordsMessage]="!data"></app-preloader>
+
+            <table mat-table [dataSource]="data" matSort matSortActive=".id" 
+                matSortDisableClear matSortDirection="asc">
+
+              <!-- ID Column -->
+              <ng-container matColumnDef=".id">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header class="text-center">ID</th>
+                <td mat-cell *matCellDef="let row" class="text-center">{{row['.id']}}</td>
+              </ng-container>
+
+              <!-- Comment Column -->
+              <ng-container matColumnDef="comment">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header class="text-center">Comment</th>
+                <td mat-cell *matCellDef="let row" class="text-center">{{row.comment}}</td>
+              </ng-container>
+
+              <!-- Mac Address Column -->
+              <ng-container matColumnDef="mac-address">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header class="text-center">Mac Address</th>
+                <td mat-cell *matCellDef="let row" class="text-center">{{row['mac-address']}}</td>
+              </ng-container>
+
+              <!-- To Address Column -->
+              <ng-container matColumnDef="to-address">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header class="text-center">To Address</th>
+                <td mat-cell *matCellDef="let row" class="text-center">{{row['to-address']}}</td>
+              </ng-container>
+              
+              <!-- Idle Time Column -->
+              <ng-container matColumnDef="idle-time">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header class="text-center">Idle Time</th>
+                <td mat-cell *matCellDef="let row" class="text-center">{{row['mac-cookie-timeout']}}</td>
+              </ng-container>
+
+              <!-- Server Column -->
+              <ng-container matColumnDef="server">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header class="text-center">Server</th>
+                <td mat-cell *matCellDef="let row" class="text-center">{{row['server']}}</td>
+              </ng-container>
+
+              <!-- Bytes In Column -->
+              <ng-container matColumnDef="bytes-in">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header class="text-center">Bytes In</th>
+                <td mat-cell *matCellDef="let row" class="text-center">{{row['bytes-in']}}</td>
+              </ng-container>
+              
+              <!-- Bytes Out Column -->
+              <ng-container matColumnDef="bytes-out">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header class="text-center">Bytes Out</th>
+                <td mat-cell *matCellDef="let row" class="text-center">{{row['bytes-out']}}</td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;">
+              </tr>
+            </table>
+      
+            <mat-paginator [length]="resultsLength" [pageSizeOptions]="[10, 20, 30, 40, 50]"></mat-paginator>
+          </div>
+
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</div>
+  

@@ -1,0 +1,123 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-lg-4 col-md-6 col-sm-6">
+        <div class="mat-card mat-card-stats">
+          <div class="mat-card-header mat-card-header-warning mat-card-header-icon">
+            <app-preloader [showPreLoader]="isFormLoading"></app-preloader>
+            <div class="mat-card-icon">
+              <fa-icon [icon]="faIcons.faUserCheck" size="2x"></fa-icon>
+            </div>
+            <h3 class="mat-card-title">{{ dashboardData.activeUsersCount }}</h3>
+          </div>
+          <div class="mat-card-footer">
+            <div class="stats">
+              <i class="material-icons text-info">star</i>
+              Active Users
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-6 col-sm-6">
+        <div class="mat-card mat-card-stats">
+          <div class="mat-card-header mat-card-header-success mat-card-header-icon">
+            <app-preloader [showPreLoader]="isFormLoading"></app-preloader>
+            <div class="mat-card-icon">
+              <fa-icon [icon]="faIcons.faNetworkWired" size="2x"></fa-icon>
+            </div>
+            <h3 class="mat-card-title">{{ dashboardData.dhcpLeasesCount }}</h3>
+          </div>
+          <div class="mat-card-footer">
+            <div class="stats">
+              <i class="material-icons text-info">star</i>
+              Allocations
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-6 col-sm-6">
+        <div class="mat-card mat-card-stats">
+          <div class="mat-card-header mat-card-header-danger mat-card-header-icon">
+            <app-preloader [showPreLoader]="isFormLoading"></app-preloader>
+            <div class="mat-card-icon">
+              <fa-icon [icon]="faIcons.faTachometerAlt" size="2x"></fa-icon>
+            </div>
+            <h3 class="mat-card-title">{{ dashboardData.cpuLoad }}</h3>
+          </div>
+          <div class="mat-card-footer">
+            <div class="stats">
+                <i class="material-icons text-info">star</i>
+              Yards
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-6 col-sm-6">
+        <div class="mat-card mat-card-stats">
+          <div class="mat-card-header mat-card-header-danger mat-card-header-icon">
+            <app-preloader [showPreLoader]="isFormLoading"></app-preloader>
+            <div class="mat-card-icon">
+              <fa-icon [icon]="faIcons.faClock" size="2x"></fa-icon>
+            </div>
+            <h3 class="mat-card-title">{{ dashboardData.uptime }}</h3>
+          </div>
+            <div class="mat-card-footer">
+              <div class="stats">
+                <i class="material-icons text-info">star</i>
+                System Time
+              </div>
+            </div>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-6 col-sm-6">
+        <div class="mat-card mat-card-stats">
+          <div class="mat-card-header mat-card-header-warning mat-card-header-icon">
+            <app-preloader [showPreLoader]="isFormLoading"></app-preloader>
+            <div class="mat-card-icon">
+              <fa-icon [icon]="faIcons.faCompactDisc" size="2x"></fa-icon>
+            </div>
+            <h3 class="mat-card-title">{{ dashboardData.freeMemory }}</h3>
+          </div>
+            <div class="mat-card-footer">
+              <div class="stats">
+                <i class="material-icons text-info">star</i>
+                Expired Allocations
+              </div>
+            </div>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-6 col-sm-6">
+        <div class="mat-card mat-card-stats">
+          <div class="mat-card-header mat-card-header-success mat-card-header-icon">
+            <app-preloader [showPreLoader]="isFormLoading"></app-preloader>
+            <div class="mat-card-icon">
+              <fa-icon [icon]="faIcons.faMemory" size="2x"></fa-icon>
+            </div>
+            <h3 class="mat-card-title">{{ dashboardData.freeHDDSpace }}</h3>
+          </div>
+            <div class="mat-card-footer">
+              <div class="stats">
+                <i class="material-icons text-info">star</i>
+                Free HDD Space
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="col-md-12">
+        <mat-card class="form-card">
+          <mat-card-header class="mat-card-header-danger">
+            <mat-card-title>Traffic</mat-card-title>
+          </mat-card-header>
+
+          <mat-card-content>
+            <app-preloader [showPreLoader]="isFormLoading"></app-preloader>
+            <div [chart]="chart"></div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</div>

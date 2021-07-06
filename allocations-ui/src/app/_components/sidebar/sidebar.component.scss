@@ -1,0 +1,19 @@
+.nav {
+
+  li:first-child > a, 
+  li > a {
+    margin: 0px 5px;
+  }
+
+  li a {
+    cursor: pointer;
+  }
+
+  .sub-nav li {
+    list-style: none;
+  }
+
+  i {
+    margin-right: 5px;
+  }
+}

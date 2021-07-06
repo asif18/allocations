@@ -1,0 +1,93 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-8">
+        <mat-card class="form-card">
+          <mat-card-header class="mat-card-header-danger">
+            <mat-card-title>{{cardTitle}}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <app-preloader [showPreLoader]="isFormLoading"></app-preloader>
+            <form [formGroup]="form" (ngSubmit)="onSubmit()">
+              <mat-form-field>
+                <input matInput placeholder="Container Number*" formControlName="containerNumber" uppercase />
+                <mat-error *ngIf="f.containerNumber.errors">
+                  Required. Only alphanumeric and space allowed - min(6) - max(10) chars
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field>
+                <mat-label>Final Destination*</mat-label>
+                <mat-select formControlName="destination">
+                  <mat-option *ngFor="let destination of formDependencyData.destinations" [value]="destination.id">{{destination.name}}</mat-option>
+                </mat-select>
+                <mat-error *ngIf="f.destination.errors">
+                  Required.
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field>
+                <mat-label>Yard*</mat-label>
+                <mat-select formControlName="yard">
+                  <mat-option *ngFor="let yard of formDependencyData.yards" [value]="yard.id">{{yard.name}}</mat-option>
+                </mat-select>
+                <mat-error *ngIf="f.yard.errors">
+                  Required.
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field>
+                <mat-label>To*</mat-label>
+                <mat-select formControlName="to">
+                  <mat-option *ngFor="let to of formDependencyData.tos" [value]="to.code">{{to.name}}</mat-option>
+                </mat-select>
+                <mat-error *ngIf="f.to.errors">
+                  Required.
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field>
+                <input matInput placeholder="Chassis Number*" formControlName="chassisNumber" uppercase />
+                <mat-error *ngIf="f.chassisNumber.errors">
+                  Required. Only alphanumeric
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field>
+                <input matInput placeholder="Seal Number*" formControlName="sealNumber" uppercase />
+                <mat-error *ngIf="f.sealNumber.errors">
+                  Required. Only alphanumeric
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="fill">
+                <input matInput placeholder="Delivery Date*" formControlName="deliveryDate" [matDatepicker]="picker" 
+                  [min]="formDependencyData.minDate" readonly />
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+                <mat-error *ngIf="f.deliveryDate.errors">
+                  Required.
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field>
+                <mat-label>Status*</mat-label>
+                <mat-select formControlName="allocationStatus">
+                  <mat-option *ngFor="let status of formDependencyData.statuses" [value]="status.id">{{status.name}}</mat-option>
+                </mat-select>
+                <mat-error *ngIf="f.allocationStatus.errors">
+                  Required.
+                </mat-error>
+              </mat-form-field>
+
+              <div class="form-group text-center">
+                <button matRipple type="submit" class="btn btn-danger">Submit</button>
+              </div>
+
+            </form>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</div>

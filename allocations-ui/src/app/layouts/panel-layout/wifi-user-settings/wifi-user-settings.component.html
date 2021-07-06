@@ -1,0 +1,133 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-8">
+        <mat-card class="form-card">
+          <mat-card-header class="mat-card-header-danger">
+            <mat-card-title>WiFi User Settings</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <app-preloader [showPreLoader]="isFormLoading"></app-preloader>
+            <form [formGroup]="form" (ngSubmit)="onSubmit()">
+              
+              <mat-form-field>
+                <mat-label>Profile*</mat-label>
+                <mat-select formControlName="profile">
+                  <mat-option *ngFor="let profile of formDependencyData.profiles" [value]="profile.name">{{profile.name}}</mat-option>
+                </mat-select>
+                <mat-error *ngIf="f.profile.errors">
+                  Required. Select profile
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field>
+                <mat-label>Repeat Interval*</mat-label>
+                <mat-select formControlName="repeatInterval">
+                  <mat-option 
+                    *ngFor="let usageTimingLimit of formDependencyData.usageTimingLimits" 
+                    [value]="usageTimingLimit.value +' '+ usageTimingLimit.time">
+                    {{usageTimingLimit.value +' '+ usageTimingLimit.time}}
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="f.repeatInterval.errors">
+                  Required. Select repeat interval
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field>
+                <mat-label>Valid Till*</mat-label>
+                <mat-select formControlName="validTill">
+                  <mat-option 
+                    *ngFor="let usageTimingLimit of formDependencyData.usageTimingLimits" 
+                    [value]="usageTimingLimit.value +' '+ usageTimingLimit.time">
+                    {{usageTimingLimit.value +' '+ usageTimingLimit.time}}
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="f.validTill.errors">
+                    Required. Enter valid date
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field>
+                <mat-label>Usage Time Limit*</mat-label>
+                <mat-select formControlName="usageTimeLimit">
+                  <mat-option 
+                    *ngFor="let usageTimingLimit of formDependencyData.usageTimingLimits" 
+                    [value]="usageTimingLimit.value +' '+ usageTimingLimit.time">
+                    {{usageTimingLimit.value +' '+ usageTimingLimit.time}}
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="f.usageTimeLimit.errors">
+                  Required. Select usage time limit
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field>
+                <mat-label>Data Usage Limit*</mat-label>
+                <mat-select formControlName="dataUsageLimit">
+                  <mat-option 
+                    *ngFor="let dataUsageLimit of formDependencyData.dataUsageLimits" 
+                    [value]="dataUsageLimit.value +' '+ dataUsageLimit.size">
+                    {{dataUsageLimit.value +' '+dataUsageLimit.size}}
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="f.dataUsageLimit.errors">
+                  Required. Select check out time
+                </mat-error>
+              </mat-form-field>
+
+              <div class="row">
+                <div class="col">
+                  <mat-checkbox formControlName="canShowNameField" [labelPosition]="'after'">Show name field</mat-checkbox>
+                </div>
+
+                <div class="col">
+                  <mat-checkbox formControlName="isNameFieldRequired" [labelPosition]="'after'">Make name field manadatory</mat-checkbox>
+                </div>
+              </div>
+
+              
+              <div class="row">
+                <div class="col">
+                  <mat-checkbox formControlName="canShowEmailField" [labelPosition]="'after'">Show email field</mat-checkbox>
+                </div>
+
+                <div class="col">
+                  <mat-checkbox formControlName="isEmailFieldRequired" [labelPosition]="'after'">Make email field mandatory</mat-checkbox>
+                </div>
+              </div>
+
+              <mat-form-field>
+                <input matInput placeholder="Advertisment URL" formControlName="advertismentImageTargetUrl" />
+              </mat-form-field>
+
+              <div class="row">
+                <div class="col">
+                  <label class="btn w-100">
+                    <span>Advertisement Image&nbsp;</span>
+                    <input #imageInput
+                           type="file"
+                           accept="image/*"
+                           (change)="uploadImage(imageInput)">
+                  </label>
+                </div>
+              </div>
+
+              <ng-container *ngIf="loginScreenSettingsData.advertismentImageUrl">
+                <div class="form-group text-center">
+                  <button matRipple type="button" class="btn btn-warning" (click)="removeAdvertismentImage()">Remove Image</button>
+                </div>
+                <img src="{{ formDependencyData.apiUrl }}/{{ loginScreenSettingsData.advertismentImageUrl}}" class="img-fluid" />
+              </ng-container>
+
+              <div class="form-group text-center">
+                <button matRipple type="submit" class="btn btn-danger">Submit</button>
+              </div>
+
+            </form>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</div>

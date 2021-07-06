@@ -1,0 +1,94 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <mat-card class="mat-elevation-z8 mat-card mt-0">
+          
+          <div class="row">
+            <div class="col-md-1 ml-auto text-right icon-container" [ngClass]="{'disabled': !data.length}">
+              <fa-icon [icon]="faIcons.faFileExcel" size="2x" class="purple-900"
+               (click)="openBottomSheet()" matTooltip="Export as excel"></fa-icon>
+            </div>
+            <div class="col-md-4">
+              <form>
+                <mat-form-field [floatLabel]="'never'">
+                  <input matInput placeholder="Search" #searchInput />
+                  <button mat-button *ngIf="searchInput.value" matSuffix mat-icon-button (click)="resetSearchValue()">
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </mat-form-field>
+              </form>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <app-preloader [showPreLoader]="isFormLoading" [showNoRecordsMessage]="!data.length"></app-preloader>
+            <table mat-table [dataSource]="data" matSort matSortActive="datetime" 
+              matSortDisableClear matSortDirection="desc">
+              
+              <!-- Receiver Column -->
+              <ng-container matColumnDef="receiver">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header class="text-center">Receiver</th>
+                <td mat-cell *matCellDef="let row" class="text-center">{{row.receiver}}</td>
+              </ng-container>
+
+              <!-- Username Column -->
+              <ng-container matColumnDef="username">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header class="text-center">Username</th>
+                <td mat-cell *matCellDef="let row" class="text-center">{{row.username}}</td>
+              </ng-container>
+
+              <!-- Password Column -->
+              <ng-container matColumnDef="password">
+                <th mat-header-cell *matHeaderCellDef class="text-center">Password</th>
+                <td mat-cell *matCellDef="let row" class="text-center">{{decryptPassword(row.password)}}</td>
+              </ng-container>
+
+              <!-- Profile Column -->
+              <ng-container matColumnDef="profile">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header class="text-center">Profile</th>
+                <td mat-cell *matCellDef="let row" class="text-center">{{row.profile}}</td>
+              </ng-container>
+
+              <!-- Mobile Number Column -->
+              <ng-container matColumnDef="mobileNumber">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header class="text-center">Mobile</th>
+                <td mat-cell *matCellDef="let row" class="text-center">{{row.mobileNumber}}</td>
+              </ng-container>
+
+              <!-- SMS Messsage Column -->
+              <ng-container matColumnDef="smsMessage">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header class="text-center">SMS Message</th>
+                <td mat-cell *matCellDef="let row" class="text-center">{{row.smsMessage}}</td>
+              </ng-container>
+
+              <!-- Sent By Column -->
+              <ng-container matColumnDef="sentBy">
+                <th mat-header-cell *matHeaderCellDef class="text-center">Sent By</th>
+                <td mat-cell *matCellDef="let row" class="text-center">{{row.sentBy}}</td>
+              </ng-container>
+
+              <!-- Business Name Column -->
+              <ng-container matColumnDef="businessName">
+                <th mat-header-cell *matHeaderCellDef class="text-center">Business Name</th>
+                <td mat-cell *matCellDef="let row" class="text-center">{{row.businessName}}</td>
+              </ng-container>
+
+              <!-- Datetime Column -->
+              <ng-container matColumnDef="datetime">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header class="text-center">Datetime</th>
+                <td mat-cell *matCellDef="let row" class="text-center">{{row.datetime}}</td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+
+            <mat-paginator [length]="resultsLength" [pageSizeOptions]="[10, 20, 30, 40, 50]"></mat-paginator>
+          </div>
+
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</div>

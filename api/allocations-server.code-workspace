@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"php.suggest.basic": false,
+		"php.executablePath": "C:/xampp/php/php.exe",
+		"php.validate.enable": true,
+		"search.exclude": {
+			"**/system": true
+		},
+		"editor.tabSize": 2
+	}
+}

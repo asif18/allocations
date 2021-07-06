@@ -1,0 +1,92 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-6">
+        <mat-card class="form-card">
+          <mat-card-header class="mat-card-header-danger">
+            <mat-card-title>Add New Yard</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <app-preloader [showPreLoader]="isFormLoading"></app-preloader>
+            <form [formGroup]="form" (ngSubmit)="onSubmit()">
+              <mat-form-field>
+                <input matInput placeholder="Code*" formControlName="code" />
+                <mat-error *ngIf="f.code.errors">
+                  Required. Only alphabets allowed - max(10) chars
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field>
+                <input matInput placeholder="Name*" formControlName="name" />
+                <mat-error *ngIf="f.name.errors">
+                  Required. Only alphabets allowed - max(30) chars
+                </mat-error>
+              </mat-form-field>
+
+              <div class="form-group text-center">
+                <button matRipple type="submit" class="btn btn-danger">Submit</button>
+              </div>
+
+            </form>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <div class="col-md-6">
+        <mat-card class="mat-elevation-z8 mat-card mt-0">
+          <div class="row">
+            <div class="col-md-12">
+              <form>
+                <mat-form-field [floatLabel]="'never'">
+                  <input matInput placeholder="Search" #searchInput />
+                  <button mat-button *ngIf="searchInput.value" matSuffix mat-icon-button (click)="resetSearchValue()">
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </mat-form-field>
+              </form>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <app-preloader [showPreLoader]="isTableLoading" [showNoRecordsMessage]="!data.length"></app-preloader>
+            <table mat-table [dataSource]="data" matSort matSortActive="code" 
+              matSortDisableClear matSortDirection="asc">
+              
+              <!-- Code Column -->
+              <ng-container matColumnDef="code">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header class="text-center">Code</th>
+                <td mat-cell *matCellDef="let row" class="text-center">{{row.code}}</td>
+              </ng-container>
+
+              <!-- Name Column -->
+              <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef class="text-center">Name</th>
+                <td mat-cell *matCellDef="let row" class="text-center">{{row.name}}</td>
+              </ng-container>
+              
+              <ng-container matColumnDef="edit">
+                <th mat-header-cell *matHeaderCellDef class="text-center">Action</th>
+                <td mat-cell *matCellDef="let element" class="text-center">
+                  <button mat-icon-button [matMenuTriggerFor]="menu">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #menu="matMenu">
+                    <button mat-menu-item color="warn" (click)="removeYard(element.id)">
+                      <mat-icon>close</mat-icon>
+                      <span>Remove</span>
+                    </button>
+                  </mat-menu>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+            <mat-paginator [length]="resultsLength" [pageSizeOptions]="[10, 20, 30, 40, 50]"></mat-paginator>
+          </div>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</div>
+  

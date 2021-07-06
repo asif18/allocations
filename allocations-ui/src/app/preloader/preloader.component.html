@@ -1,0 +1,6 @@
+<div class="pre-loader" *ngIf="showPreLoader || showNoRecordsMessage">
+  <mat-progress-bar *ngIf="showPreLoader" color="accent" mode="indeterminate"></mat-progress-bar>
+  <div class="pre-loader" *ngIf="!showPreLoader && showNoRecordsMessage">
+    <div class="no-records-found">No records found</div>
+  </div>
+</div>
