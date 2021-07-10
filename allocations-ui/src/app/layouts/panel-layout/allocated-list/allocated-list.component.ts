@@ -54,22 +54,22 @@ declare interface FormDependencyData {
   yards: object[];
   tos: object[];
   statuses: object[];
-  isAllocateButtonDisabled?: boolean;
+  isDeliveryButtonDisabled?: boolean;
 }
 
 @Component({
-  selector: 'app-allocations-list',
-  templateUrl: './allocations-list.component.html',
-  styleUrls: ['./allocations-list.component.scss']
+  selector: 'app-allocated-list',
+  templateUrl: './allocated-list.component.html',
+  styleUrls: ['./allocated-list.component.scss']
 })
-export class AllocationsListComponent implements OnInit, AfterViewInit, OnDestroy  {
+export class AllocatedListComponent implements OnInit, AfterViewInit, OnDestroy  {
 
-  public displayedColumns: string[] = ['select', 'container_number', 'destinationName', 'yardName', 'to', 'chassis_number',
-    'seal_number', 'allocationStatus', 'is_rail_bill', 'createdBy', 'created_datetime', 'edit'];
+  public displayedColumns: string[] = ['select', 'container_number', 'destinationName', 'yardName', 'openDate', 'expiryDate',
+   'action'];
   public data: Allocations[] = [];
   public isFormLoading: boolean = false;
   public form: FormGroup;
-  public allocationForm: FormGroup;
+  public deliveryForm: FormGroup;
   public resultsLength = 0;
   public pageSize: number = 10;
   private subscriptions: Subscription[] = [];
@@ -79,7 +79,7 @@ export class AllocationsListComponent implements OnInit, AfterViewInit, OnDestro
     yards: [],
     tos: [],
     statuses: [],
-    isAllocateButtonDisabled: true
+    isDeliveryButtonDisabled: true
   };
   private onSearch: EventEmitter<any> = new EventEmitter();
   public selection = new SelectionModel<Allocations>(true, []);
@@ -224,14 +224,14 @@ export class AllocationsListComponent implements OnInit, AfterViewInit, OnDestro
       destination: new FormControl(null),
       yard: new FormControl(null),
       to: new FormControl(null),
-      status: new FormControl('NAL')
+      status: new FormControl('ALC')
     });
   }
 
   private resetForm(): void {
     this.form.reset();
     this.form.patchValue({
-      status: 'NAL'
+      status: 'ALC'
     })
   }
 
@@ -239,14 +239,9 @@ export class AllocationsListComponent implements OnInit, AfterViewInit, OnDestro
     return this.form.controls;
   }
 
-  private initAllocationForm() {
-    this.allocationForm = this.formBuilder.group({
-      openDate: new FormControl(null, {
-        validators: [
-          Validators.required
-        ]
-      }),
-      expiryDate: new FormControl(null, {
+  private initDeliveryForm() {
+    this.deliveryForm = this.formBuilder.group({
+      deliveryDate: new FormControl(new  Date(), {
         validators: [
           Validators.required
         ]
@@ -255,8 +250,8 @@ export class AllocationsListComponent implements OnInit, AfterViewInit, OnDestro
     });
   }
 
-  get af() {
-    return this.allocationForm.controls;
+  get df() {
+    return this.deliveryForm.controls;
   }
 
   public onClearSearch(): void {
@@ -298,22 +293,23 @@ export class AllocationsListComponent implements OnInit, AfterViewInit, OnDestro
     return numSelected === numRows;
   }
 
+  
   public masterToggle() {
     this.isAllSelected() ? this.selection.clear() : this.data.forEach(row => this.selection.select(row));
   }
 
   public onSelectAll(event: any) {
     const evt = event ? this.masterToggle() : null;
-    this.enableDisableAllocationButton();
+    this.enableDisableDeliveryButton();
   }
 
   public onSelect(event: any, row: any): void {
     const evt = event ? this.selection.toggle(row) : null;
-    this.enableDisableAllocationButton();
+    this.enableDisableDeliveryButton();
   }
 
-  private enableDisableAllocationButton() {
-    this.formDependencyData.isAllocateButtonDisabled = (_.size(this.selection.selected) === 0);
+  private enableDisableDeliveryButton() {
+    this.formDependencyData.isDeliveryButtonDisabled = (_.size(this.selection.selected) === 0);
   }
 
   public deleteAllocation(id: string) {
@@ -338,30 +334,29 @@ export class AllocationsListComponent implements OnInit, AfterViewInit, OnDestro
               this.snackBar.show(response.message, response.status ? 'success' : 'danger');
             }
           }, () => noop()));
-        
       }
     }));
   }
 
-  public openAllocateModal(): void {
+  public openDeliveryModal(): void {
     this.allocateModalRef = this.dialog.open(this.allocateModal);
-    this.initAllocationForm();
+    this.initDeliveryForm();
   }
 
-  public onAllocationFormSubmit(): void {
-    if (this.allocationForm.invalid) {
+  public onDeliveryFormSubmit(): void {
+    if (this.deliveryForm.invalid) {
       return;
     }
 
     const ids = _.map(this.selection.selected, (item) => item.id);
-    this.af.ids.setValue(ids);
+    this.df.ids.setValue(ids);
     this.isFormLoading = true;
-    this.subscriptions.push(this.allocationsService.allocate(this.allocationForm.value)
+    this.subscriptions.push(this.allocationsService.markAsDelivered(this.deliveryForm.value)
       .pipe(finalize(() => {
         this.isFormLoading = false;
         this.allocateModalRef.close();
         this.selection.clear();
-        this.enableDisableAllocationButton();
+        this.enableDisableDeliveryButton();
         this.onSearch.emit(this.form.value);
       }))
       .subscribe((response: DefaultApiResponse) => {

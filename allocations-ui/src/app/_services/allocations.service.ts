@@ -26,6 +26,13 @@ export class AllocationsService {
     return this.http.post<any>(`${environment.apiUrl}/allocations/getAllocationStatuses`, postData);
   }
 
+  getAllTos(): object[] {
+    return [
+      { code: 'BNSF', name: 'BNSF'  },
+      { code: 'ICTF', name: 'ICTF'  }
+    ];
+  }
+
   saveAllocation(postData: any): Observable<any> {
     return this.http.post<any>(`${environment.apiUrl}/allocations/saveAllocation`, postData);
   }
@@ -37,5 +44,17 @@ export class AllocationsService {
   exportAllocations(postData: DefaultListApiParams): Observable<any> {
     return this.http.post(`${environment.apiUrl}/allocations/getAllocations/export`, postData,
       {observe: 'response', responseType: 'blob'});
+  }
+
+  removeAllocation(id: string): Observable<any> {
+    return this.http.get<any>(`${environment.apiUrl}/allocations/removeAllocation/${id}`);
+  }
+
+  allocate(postData: any): Observable<any> {
+    return this.http.post<any>(`${environment.apiUrl}/allocations/allocate`, postData);
+  }
+
+  markAsDelivered(postData: any): Observable<any> {
+    return this.http.post<any>(`${environment.apiUrl}/allocations/markAsDelivered`, postData);
   }
 }

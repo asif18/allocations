@@ -17,11 +17,13 @@ import { FooterComponent } from './footer';
 import { NavbarComponent } from './navbar';
 import { SidebarComponent } from './sidebar';
 import { PreloaderComponent } from '../preloader/preloader.component';
-import { BottomSheetFileDownloadPromptComponent } from '../_components/bottom-sheet-file-download-prompt';
+import { BottomSheetFileDownloadPromptComponent } from './bottom-sheet-file-download-prompt';
+import { ConfirmationDialogComponent } from './confirmation-dialog';
 
 @NgModule({
   entryComponents: [
-    BottomSheetFileDownloadPromptComponent
+    BottomSheetFileDownloadPromptComponent,
+    ConfirmationDialogComponent
   ],
   imports: [
     CommonModule,
@@ -33,7 +35,8 @@ import { BottomSheetFileDownloadPromptComponent } from '../_components/bottom-sh
     NavbarComponent,
     SidebarComponent,
     PreloaderComponent,
-    BottomSheetFileDownloadPromptComponent
+    BottomSheetFileDownloadPromptComponent,
+    ConfirmationDialogComponent
   ],
   exports: [
     FooterComponent,

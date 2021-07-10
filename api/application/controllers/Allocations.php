@@ -42,7 +42,7 @@ class Allocations extends REST_Controller {
   public function saveAllocation_post() {
     $decodedToken = AUTHORIZATION::validateToken();
     $acceptedKeys = array('containerNumber*', 'destination*', 'yard*', 'to*', 'chassisNumber*', 'sealNumber*', 
-      'deliveryDate*', 'allocationStatus*');
+      'dropDate*', 'allocationStatus*', 'isRailBill*');
     $input = $this->post();
     AUTHORIZATION::validateRequestInput($acceptedKeys, $input);
     $userInfo = AUTHORIZATION::validateUser($decodedToken->id);
@@ -60,9 +60,10 @@ class Allocations extends REST_Controller {
       'to'                    => $input['to'],
       'chassis_number'        => $input['chassisNumber'],
       'seal_number'           => $input['sealNumber'],
-      'delivery_date'         => $input['deliveryDate'],
+      'drop_date'             => $input['dropDate'],
       'allocation_status_id'  => $input['allocationStatus'],
-      'status'                => 'A',
+      'is_rail_bill'          => $input['isRailBill'],
+      'status'                => 'NAL',
       'created_by'            => $userInfo['id'],
       'datetime'              => $this->timenow
     );
@@ -110,15 +111,90 @@ class Allocations extends REST_Controller {
       $this->response($output, $httpCode);
     }
 
-    $updatetData = array('status' => 'D');
+    $updatetData = array('status' => 'DEL');
 
     $where = array('id' => $id);
     $status = $this->AllocationsModel->updateAllocation($updatetData, $where);
     
-    log_message('info', 'removeAllocation_get yard updated - '.$id);
+    log_message('info', 'removeAllocation_get allocation removed - '.$id);
     $output = array(
       'status' => true,
       'message' => 'removed successfully');
+    $httpCode = REST_Controller::HTTP_OK;
+    $this->response($output, $httpCode);
+  }
+
+  /**
+   * URL: /allocations/allocate
+   * Method: POST
+   */
+  public function allocate_post() {
+    $decodedToken = AUTHORIZATION::validateToken();
+    $acceptedKeys = array('ids*', 'openDate*', 'expiryDate*');
+    $input = $this->post();
+    AUTHORIZATION::validateRequestInput($acceptedKeys, $input);
+    $userInfo = AUTHORIZATION::validateUser($decodedToken->id);
+
+    if ($userInfo['role'] !==  SUPERADMIN && $userInfo['role'] !== SUPERADMIN_STAFF && $userInfo['role'] !== STAFF) {
+      $output = array('status' => false);
+      $httpCode = REST_Controller::HTTP_UNAUTHORIZED;
+      $this->response($output, $httpCode);
+    }
+
+    $updateData = array(
+      'open_date'         => $input['openDate'],
+      'expiry_date'       => $input['expiryDate'],
+      'status'            => 'ALC',
+      'last_updated_by'   => $userInfo['id'],
+      'last_updated_on'   => $this->timenow
+    );
+
+    foreach ($input['ids'] as $id) {
+      $this->AllocationsModel->updateAllocation($updateData, array('id' => $id));
+      log_message('info', 'allocate_post allocation allocated - '.$id);
+    }
+    
+    $output = array(
+      'status' => true,
+      'message' => 'allocated successfully');
+    $httpCode = REST_Controller::HTTP_OK;
+    $this->response($output, $httpCode);
+  }
+
+  /**
+   * URL: /allocations/markAsDelivered
+   * Method: POST
+   */
+  public function markAsDelivered_post() {
+    $decodedToken = AUTHORIZATION::validateToken();
+    $acceptedKeys = array('ids*', 'deliveryDate*');
+    $input = $this->post();
+    AUTHORIZATION::validateRequestInput($acceptedKeys, $input);
+    $userInfo = AUTHORIZATION::validateUser($decodedToken->id);
+
+    if ($userInfo['role'] !==  SUPERADMIN && $userInfo['role'] !== SUPERADMIN_STAFF && $userInfo['role'] !== STAFF) {
+      $output = array('status' => false);
+      $httpCode = REST_Controller::HTTP_UNAUTHORIZED;
+      $this->response($output, $httpCode);
+    }
+
+    $updateData = array(
+      'delivery_date'       => $input['deliveryDate'],
+      'status'              => 'DLY',
+      'last_updated_by'     => $userInfo['id'],
+      'last_updated_on'     => $this->timenow,
+      'delivery_updated_by' => $userInfo['id'],
+      'delivery_updated_on' => $this->timenow
+    );
+
+    foreach ($input['ids'] as $id) {
+      $this->AllocationsModel->updateAllocation($updateData, array('id' => $id));
+      log_message('info', 'markAsDelivered_post allocation - '.$id);
+    }
+    
+    $output = array(
+      'status' => true,
+      'message' => 'marked as delivered');
     $httpCode = REST_Controller::HTTP_OK;
     $this->response($output, $httpCode);
   }
@@ -194,33 +270,54 @@ class Allocations extends REST_Controller {
       al.to, 
       al.chassis_number, 
       al.seal_number, 
+      al.drop_date, 
       al.delivery_date, 
+      al.open_date, 
+      al.expiry_date, 
+      al.is_rail_bill, 
       asd.name as allocationStatus, 
       al.status, 
       u.name AS createdBy,  
-      al.datetime 
+      al.datetime  AS created_datetime
       FROM
         {$this->tblprefix}allocations al 
         LEFT JOIN {$this->tblprefix}destinations ds ON ds.id = al.destination_id 
         LEFT JOIN {$this->tblprefix}yards ys ON ys.id = al.yard_id 
         LEFT JOIN {$this->tblprefix}allocation_statuses asd ON asd.id = al.allocation_status_id 
         LEFT JOIN {$this->tblprefix}users u ON u.id = al.created_by  
-      WHERE
-        al.status = 'A' ");
+      WHERE ");
 
-    if (is_string($input['searchBy'])) {
-      array_push($query, 
-        "AND (al.container_number LIKE '%{$input['searchBy']}%' OR al.to LIKE '%{$input['searchBy']}%' 
-        OR al.chassis_number LIKE '%{$input['searchBy']}%' OR al.seal_number LIKE '%{$input['searchBy']}%')");
+    if (is_array($input['searchBy'])) {
+      if (strlen($input['searchBy']['status']) > 0) {
+        array_push($query, "al.status = '{$input['searchBy']['status']}' ");
+      }
+      if (strlen($input['searchBy']['containerNumber']) > 0) {
+        array_push($query, "AND al.container_number = '{$input['searchBy']['containerNumber']}' ");
+      }
+      if (strlen($input['searchBy']['destination']) > 0) {
+        array_push($query, "AND al.destination_id = '{$input['searchBy']['destination']}' ");
+      }
+      if (strlen($input['searchBy']['to']) > 0) {
+        array_push($query, "AND al.to = '{$input['searchBy']['to']}' ");
+      }
+      if (strlen($input['searchBy']['yard']) > 0) {
+        array_push($query, "AND al.yard_id = '{$input['searchBy']['yard']}' ");
+      } 
     }
-    if ($input['sortBy']) array_push($query, "ORDER BY `{$input['sortBy']}` {$input['sortDirection']}");
+    if ($input['sortBy']) array_push($query, "ORDER BY al.{$input['sortBy']} {$input['sortDirection']}");
     if (is_numeric($input['startFrom'])) array_push($query, "LIMIT {$input['startFrom']}");
     if (is_numeric($input['endTo'])) array_push($query, ", {$input['endTo']}");
     
     $query = implode(' ', $query);
 
     $allocations = $this->AllocationsModel->getAllAllocations($query);
-  
+    if (count($allocations) > 0) {
+      $allocations = array_map(function($allocation) {
+        $allocation['is_rail_bill'] = $this->utility->parseTinyIntToBoolean($allocation['is_rail_bill']);
+        return $allocation;
+      },  $allocations);
+    }
+
     if ($exportAsExcel == 'export') {
       $spreadsheet = new Spreadsheet();
       $sheet = $spreadsheet->getActiveSheet();

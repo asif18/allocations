@@ -29,7 +29,7 @@
    yards: object[];
    tos: object[];
    statuses: object[];
-   minDate: Date;
+   maxDate: Date;
  }
 
 @Component({
@@ -49,10 +49,8 @@ export class AllocationsComponent implements OnInit, OnDestroy {
     yards: [],
     tos: [],
     statuses: [],
-    minDate: new Date(),
+    maxDate: new Date(),
   };
-  public hasAllocationIdInUrl: boolean = false;
-  private allocationId: string = null;
   public cardTitle: string = 'Allocations';
 
   constructor(
@@ -67,15 +65,6 @@ export class AllocationsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.titleService.setTitle('Allocations');
-    this.subscriptions.push(this.route.params.subscribe(params => {
-      this.hasRoomIdInUrl = !!params.id;
-
-      if (this.hasAllocationIdInUrl) {
-        try {
-          this.allocationId = atob(params.id);
-        } catch (error) { this.hasAllocationIdInUrl = false; noop(); }
-      }
-    }));
     this.initForm();
     this.getFormInitialData();
   }
@@ -102,19 +91,9 @@ export class AllocationsComponent implements OnInit, OnDestroy {
           destinations: response[0].data.items,
           yards: response[1].data.items,
           statuses: response[2].data.items,
-          tos: [
-            { code: 'BNSF', name: 'BNSF'  },
-            { code: 'ICTF', name: 'ICTF'  }
-          ],
-          minDate: new Date()
+          tos: this.allocationsService.getAllTos(),
+          maxDate: new Date()
         };
-        if (this.hasRoomIdInUrl) {
-          
-          const cardTitle = `Edit`;
-          this.titleService.setTitle(cardTitle);
-          this.cardTitle = cardTitle;
-          //this.form.patchValue({room});
-        }
       }));
   }
 
@@ -123,8 +102,8 @@ export class AllocationsComponent implements OnInit, OnDestroy {
       containerNumber: new FormControl(null, {
         validators: [
           Validators.required,
-          Validators.maxLength(10),
-          Validators.minLength(6),
+          Validators.maxLength(7),
+          Validators.minLength(7),
           Validators.pattern(/^[A-Z0-9]+$/)
         ]
       }),
@@ -157,7 +136,7 @@ export class AllocationsComponent implements OnInit, OnDestroy {
           Validators.pattern(/^[A-Z0-9]+$/)
         ]
       }),
-      deliveryDate: new FormControl(null, {
+      dropDate: new FormControl(null, {
         validators: [
           Validators.required
         ]
@@ -166,7 +145,8 @@ export class AllocationsComponent implements OnInit, OnDestroy {
         validators: [
           Validators.required
         ]
-      })
+      }),
+      isRailBill: new FormControl(false)
     });
   }
 

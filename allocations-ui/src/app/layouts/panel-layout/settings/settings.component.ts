@@ -25,7 +25,6 @@ declare interface SettingsData {
   phone: string;
   settings: any;
   username: string;
-  instances: object[];
 }
 
 @Component({
@@ -45,8 +44,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     email: null,
     phone: null,
     settings: null,
-    username: null,
-    instances: null
+    username: null
   };
 
   constructor(
@@ -68,7 +66,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
       .subscribe((response: DefaultApiResponse) => {
         this.settingsData = response.data;
         this.form.patchValue({
-          instance: _.isObject(this.settingsData.settings) ? this.settingsData.settings.activeInstanceId : null,
           name: this.settingsData.name,
           businessName: this.settingsData.businessName,
           email: this.settingsData.email,
@@ -81,9 +78,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   private initForm(): void {
     this.form = this.formBuilder.group({
-      instance: new FormControl(null, [
-        Validators.required
-      ]),
       name: new FormControl(null, {
         validators: [
           Validators.required,

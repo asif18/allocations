@@ -25,6 +25,7 @@ import { DashboardResolver } from '../../_classes';
 
 import { AllocationsComponent } from './allocations';
 import { AllocationsListComponent } from './allocations-list';
+import { AllocatedListComponent } from './allocated-list';
 import { YardsComponent } from './yards';
 import { DestinationsComponent } from './destinations';
 
@@ -79,6 +80,7 @@ import { WebLogsComponent } from './web-logs/web-logs.component';
     
     AllocationsComponent,
     AllocationsListComponent,
+    AllocatedListComponent,
     YardsComponent,
     DestinationsComponent,
 
@@ -99,8 +101,7 @@ import { WebLogsComponent } from './web-logs/web-logs.component';
     WifiUserSettingsComponent,
     AccessPointManagerComponent,
     AccessPointManagerListComponent,
-    WebLogsComponent,
-    AllocationsComponent
+    WebLogsComponent
   ],
   providers: [
     AuthGuard,

@@ -113,10 +113,12 @@ class Auth extends REST_Controller {
     return array(
       'dashboard'         => [SUPERADMIN, SUPERADMIN_STAFF, STAFF],
       'allocations'       => [SUPERADMIN, SUPERADMIN_STAFF, STAFF],
-      'allocationsList'   => [SUPERADMIN, SUPERADMIN_STAFF, STAFF],
+      'notAllocatedList'  => [SUPERADMIN, SUPERADMIN_STAFF, STAFF],
+      'allocatedList'     => [SUPERADMIN, SUPERADMIN_STAFF, STAFF],
       'yards'             => [SUPERADMIN, SUPERADMIN_STAFF],
       'destinations'      => [SUPERADMIN, SUPERADMIN_STAFF],
-      'generalSettings'   => [SUPERADMIN, SUPERADMIN_STAFF]
+      'staffsList'        => [SUPERADMIN, SUPERADMIN_STAFF],
+      'generalSettings'   => [SUPERADMIN, SUPERADMIN_STAFF, STAFF]
     );
   }
 
@@ -203,15 +205,23 @@ class Auth extends REST_Controller {
           array(
             'name' => 'allocations',
             'path' => '/panel/allocations',
-            'caption' => 'Allocations',
+            'caption' => 'Add Allocations',
             'icon' => 'photo_filter',
             'class' => '',
             'isDisabled' => false
           ),
           array(
-            'name' => 'allocationsList',
-            'path' => '/panel/allocations-list',
-            'caption' => 'Allocations list',
+            'name' => 'notAllocatedList',
+            'path' => '/panel/not-allocated-list',
+            'caption' => 'Not Allocated list',
+            'icon' => 'meeting_room',
+            'class' => '',
+            'isDisabled' => false
+          ),
+          array(
+            'name' => 'allocatedList',
+            'path' => '/panel/allocated-list',
+            'caption' => 'Allocated list',
             'icon' => 'meeting_room',
             'class' => '',
             'isDisabled' => false
@@ -259,7 +269,17 @@ class Auth extends REST_Controller {
         'class' => '',
         'isDisabled' => false,
         'options' => array('exact' => true)
-      ));
+      ),
+      array(
+        'order' => 5,
+        'name' => 'staffsList',
+        'path' => '/panel/staffs-list',
+        'caption' => 'Staffs',
+        'icon' => 'supervisor_account',
+        'class' => '',
+        'isDisabled' => false,
+        'options' => array('exact' => true)
+      ));;
     }
     
     $output = array(

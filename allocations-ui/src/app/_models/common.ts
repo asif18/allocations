@@ -17,7 +17,7 @@ export interface DefaultApiResponse {
 }
 
 export interface DefaultListApiParams {
-  searchBy: string;
+  searchBy: string | object;
   startFrom: number;
   endTo: number;
   sortBy: string;

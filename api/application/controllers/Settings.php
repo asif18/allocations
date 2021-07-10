@@ -31,7 +31,6 @@ class Settings extends REST_Controller {
     $this->tblprefix = $this->db->tblprefix;
     $this->timenow = $this->utility->timenow();
     $this->load->model('UserModel');
-    $this->load->model('InstanceModel');
   }
 
   /**
@@ -48,29 +47,13 @@ class Settings extends REST_Controller {
       $where = "i.status = 'ACT'";
     }
 
-    $instances = $this->InstanceModel->getAllInstances("SELECT 
-      i.name,
-      i.id,
-      i.mik_ip AS mikIp, 
-      i.mik_port AS mikPort, 
-      i.status AS mikStatus
-      FROM
-      {$this->tblprefix}instances i JOIN {$this->tblprefix}users u
-      ON i.user_id = u.id
-      WHERE {$where}");
-
-    foreach ($instances as $key => $value) {
-      $instances[$key]['id'] = (INT)$instances[$key]['id'];
-    }
-
     $settingsData = array(
       'name' => $userInfo['name'],
       'businessName' => $userInfo['business_name'],
       'username' => $userInfo['username'],
       'email' => $userInfo['email'],
       'phone' => $userInfo['phone'],
-      'settings' => json_decode($userInfo['settings'], true),
-      'instances' => $instances
+      'settings' => json_decode($userInfo['settings'], true)      
     );
 
     $output = array(
@@ -87,19 +70,16 @@ class Settings extends REST_Controller {
   public function saveSettings_post() {
     log_message('info', 'saveSettings_post');
     $decodedToken = AUTHORIZATION::validateToken();
-    $acceptedKeys = array('instance*', 'name*', 'businessName*', 'email*', 'phone*', 'password*');
+    $acceptedKeys = array('name*', 'businessName*', 'email*', 'phone*', 'password*');
     $input = $this->post();
     AUTHORIZATION::validateRequestInput($acceptedKeys, $input);
     $userInfo = AUTHORIZATION::validateUser($decodedToken->id);
-    
-    $settings = $this->utility->updateJSON($userInfo['settings'], array('activeInstanceId' => $input['instance']));
 
     $updateData = array(
       'name' => $input['name'],
       'business_name' => $input['businessName'],
       'email' => $input['email'],
-      'phone' => $input['phone'],
-      'settings' => $settings
+      'phone' => $input['phone']
     );
 
     if (!is_null($input['password'])) {
@@ -117,119 +97,5 @@ class Settings extends REST_Controller {
       'message' => 'saved successfully');
     $httpCode = REST_Controller::HTTP_OK;
     $this->response($output, $httpCode);
-  }
-  
-  /**
-   * URL: /settings/getWifiUserSettings
-   * Method: GET
-   */
-  public function getWifiUserSettings_get() {
-    $decodedToken = AUTHORIZATION::validateToken();
-    $userInfo = AUTHORIZATION::validateUser($decodedToken->id);
-    $instance = AUTHORIZATION::validateMikInstance($userInfo);
-
-    $output = array(
-      'status' => true,
-      'data' => json_decode($instance['wifi_user_settings']));
-    $httpCode = REST_Controller::HTTP_OK;
-    $this->response($output, $httpCode);
-  }
-  
-  /**
-   * URL: /settings/saveWifiUserSettings
-   * Method: POST
-   */
-  public function saveWifiUserSettings_post() {
-    log_message('info', 'saveWifiUserSettings_post');
-    $decodedToken = AUTHORIZATION::validateToken();
-    $acceptedKeys = array('profile*', 'repeatInterval*', 'usageTimeLimit*', 'validTill*', 'dataUsageLimit*',
-      'canShowNameField*', 'isNameFieldRequired*', 'canShowEmailField*', 'isEmailFieldRequired*',
-      'advertismentImageTargetUrl*');
-    $input = $this->post();
-    AUTHORIZATION::validateRequestInput($acceptedKeys, $input);
-    $userInfo = AUTHORIZATION::validateUser($decodedToken->id);
-    $instance = AUTHORIZATION::validateMikInstance($userInfo);
-    
-    $settings = $this->utility->updateJSON($instance['wifi_user_settings'], array(
-      'profile' => $input['profile'],
-      'repeatInterval' => $input['repeatInterval'],
-      'usageTimeLimit' => $input['usageTimeLimit'],
-      'validTill' => $input['validTill'],
-      'dataUsageLimit' => $input['dataUsageLimit'],
-      'canShowNameField' => $input['canShowNameField'],
-      'isNameFieldRequired' => $input['isNameFieldRequired'],
-      'canShowEmailField' => $input['canShowEmailField'],
-      'isEmailFieldRequired' => $input['isEmailFieldRequired'],
-      'advertismentImageTargetUrl' => $input['advertismentImageTargetUrl']
-    ));
-
-    $updateData = array('wifi_user_settings' => $settings);
-
-    $status = $this->InstanceModel->updateInstance($updateData, array('id' => $instance['id']));
-    log_message('info', 'saveWifiUserSettings_post settings update - '.$instance['id']);
-    $output = array(
-      'status' => true,
-      'message' => 'saved successfully');
-    $httpCode = REST_Controller::HTTP_OK;
-    $this->response($output, $httpCode);
-  }
-
-  /**
-   * URL: /settings/uploadAdvertismentImage
-   * Method: POST
-   */
-  public function uploadAdvertismentImage_post() {
-    log_message('info', 'uploadAdvertismentImage_post');
-    $decodedToken = AUTHORIZATION::validateToken();
-    $acceptedKeys = array('advertismentImage');
-    $input = $this->post();
-    AUTHORIZATION::validateRequestInput($acceptedKeys, $input);
-    $userInfo = AUTHORIZATION::validateUser($decodedToken->id);
-    $instance = AUTHORIZATION::validateMikInstance($userInfo);
-    
-    $tmp = explode('.', $_FILES['image']['name']);
-    $advertismentImageUrl = 'uploads/adv_img_' . date('dmyhis') . '.' . end($tmp);;
-    move_uploaded_file($_FILES['image']['tmp_name'], $advertismentImageUrl);
-
-    $settings = $this->utility->updateJSON($instance['wifi_user_settings'], array(
-      'advertismentImageUrl' => $advertismentImageUrl
-    ));
-  
-    $updateData = array('wifi_user_settings' => $settings);
-    $status = $this->InstanceModel->updateInstance($updateData, array('id' => $instance['id']));
-    log_message('info', 'uploadAdvertismentImage_post settings update - '.$instance['id']);
-    $output = array(
-      'status' => true,
-      'data' => array('advertismentImageUrl' => $advertismentImageUrl),
-      'message' => 'saved successfully');
-    $httpCode = REST_Controller::HTTP_OK;
-    $this->response($output, $httpCode);
-  }
-
-  /**
-   * URL: /settings/removeAdvertismentImage
-   * Method: POST
-   */
-  public function removeAdvertismentImage_get() {
-    log_message('info', 'removeAdvertismentImage_get');
-    $decodedToken = AUTHORIZATION::validateToken();
-    $userInfo = AUTHORIZATION::validateUser($decodedToken->id);
-    $instance = AUTHORIZATION::validateMikInstance($userInfo);
-    
-    $advertismentImageUrl = json_decode($instance['wifi_user_settings'], true)['advertismentImageUrl'];
-    unlink($advertismentImageUrl);
-    $settings = $this->utility->updateJSON($instance['wifi_user_settings'], array(
-      'advertismentImageUrl' => null
-    ));
-  
-    $updateData = array('wifi_user_settings' => $settings);
-    $status = $this->InstanceModel->updateInstance($updateData, array('id' => $instance['id']));
-    log_message('info', 'removeAdvertismentImage_get settings update - '.$instance['id']);
-    $output = array(
-      'status' => true,
-      'message' => 'removed successfully');
-    $httpCode = REST_Controller::HTTP_OK;
-    $this->response($output, $httpCode);
-  }
-  
+  }  
 }

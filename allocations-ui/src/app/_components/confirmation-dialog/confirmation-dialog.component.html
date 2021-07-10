@@ -1,0 +1,8 @@
+<mat-dialog-content>
+	<p>{{message}}</p>
+</mat-dialog-content>
+<mat-dialog-actions align="center">
+  <button matRipple type="button" class="btn btn-sm btn-danger" (click)="onConfirmClick()" 
+    tabindex="1">{{confirmButtonText}}</button>
+	<button matRipple mat-dialog-close class="btn btn-sm" tabindex="-1">{{cancelButtonText}}</button>
+</mat-dialog-actions>
