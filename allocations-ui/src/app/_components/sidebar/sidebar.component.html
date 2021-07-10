@@ -4,22 +4,6 @@
   </div>
 </div>
 <div class="sidebar-wrapper">
-
-  <div class="col-lg-12 media" *ngIf="isMobileMenu()">
-    <mat-icon class="mr-3">network_wifi</mat-icon>
-    <div class="media-body">
-      <h5 class="mt-0 mb-0">Current Instance</h5>
-      <div *ngIf="currentInstance; else notConnected">
-        {{ currentInstance.name }}
-        <br />
-        {{ currentInstance.ip + ':' + currentInstance.port }}
-      </div>
-      <ng-template #notConnected>
-        Not connected to any instance
-      </ng-template>
-    </div>
-  </div>
-
   <div class="col-lg-12 mt-2 mb-2 text-center">
     Toggle Menu
     <mat-slide-toggle [checked]="isAllSubMenusOpen" (change)="toggleSubMenus()"></mat-slide-toggle>

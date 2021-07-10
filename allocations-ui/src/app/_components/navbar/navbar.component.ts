@@ -14,7 +14,7 @@ import { Location } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthenticationService } from '../../_services';
-import { CurrentInstance, UserInfo } from '../../_models';
+import { UserInfo } from '../../_models';
 import * as _ from 'lodash';
 
 @Component({
@@ -28,7 +28,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
   private sidebarVisible: boolean;
   public title: string = null;
   private subscriptions: Subscription[] = [];
-  public currentInstance: CurrentInstance =  null;
   public userInfo: UserInfo = null;
 
   constructor(
@@ -55,7 +54,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
     this.subscriptions.push(this.authenticationService.userInfo.subscribe((userInfo: UserInfo) => {
       this.userInfo = userInfo;
-      this.currentInstance = !_.isNull(userInfo && userInfo.currentInstance) ? userInfo.currentInstance : null;
     }));
 
     this.subscriptions.push(this.route.url.subscribe(() => {

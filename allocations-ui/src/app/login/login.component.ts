@@ -49,7 +49,7 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.titleService.setTitle('MikiFi Login');
+    this.titleService.setTitle('Allocations Login');
     this.form = this.formBuilder.group({
       username: new FormControl(null, [
         Validators.required

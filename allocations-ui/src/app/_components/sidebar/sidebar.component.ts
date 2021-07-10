@@ -12,7 +12,7 @@
 import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { CurrentInstance, RouteInfo, DefaultApiResponse, UserInfo } from '../../_models';
+import { RouteInfo, DefaultApiResponse, UserInfo } from '../../_models';
 import { AuthenticationService } from '../../_services';
 import * as _ from 'lodash';
 
@@ -27,7 +27,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
   public menuItems: RouteInfo[] = null;
   public isAllSubMenusOpen: boolean = false;
   private subscriptions: Subscription[] = [];
-  public currentInstance: CurrentInstance =  null;
 
   constructor(
     private router: Router,
@@ -37,10 +36,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
     this.subscriptions.push(this.authenticationService.getMenuItems()
       .subscribe((menuItems: DefaultApiResponse) => this.menuItems = _.sortBy(menuItems.data, ['order']))
     );
-
-    this.subscriptions.push(this.authenticationService.userInfo.subscribe((userInfo: UserInfo) =>
-      this.currentInstance = !_.isNull(userInfo && userInfo.currentInstance) ? userInfo.currentInstance : null
-    ));
   }
 
   isMobileMenu(): boolean {

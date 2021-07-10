@@ -78,12 +78,4 @@ export class AuthenticationService implements Resolve<any> {
   getMenuItems(): Observable<any> {
     return this.http.get(`${environment.apiUrl}/auth/getMenuItems`);
   }
-
-  getActiveInstance(): object {
-    return this.userInfo.getValue().currentInstance;
-  }
-
-  hasAccess(accessName: string): boolean {
-    return this.userInfo.getValue().access[accessName];
-  }
 }

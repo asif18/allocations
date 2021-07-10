@@ -24,19 +24,6 @@ export interface DefaultListApiParams {
   sortDirection: string;
 }
 
-export interface CurrentInstance {
-  name: string;
-  id: string;
-  port: string;
-  username: string;
-  password: string;
-}
-
-export interface DnsInfo {
-  dnsIp: string;
-  dnsPort: string;
-}
-
 export interface UserInfo {
   id: string;
   name: string;
@@ -44,11 +31,4 @@ export interface UserInfo {
   username: string;
   role: string;
   type: string;
-  currentInstance: CurrentInstance;
-  dnsInfo: DnsInfo;
-  access: AccessLevels;
-}
-
-export interface AccessLevels {
-  canRemoveRoom?: boolean;
 }

@@ -1,6 +1,6 @@
 <?php 
 /**
- * Copyrights MikiFi 2019. All rights reserved
+ * Copyrights Allocations 2019. All rights reserved
  * 
  * The code, text and other elements of this application/file is copyrighted
  * You may not remove any copyright or other proprietary notices contained in this file

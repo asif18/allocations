@@ -6,7 +6,7 @@ header("HTTP/1.1 404 Not Found");
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>MikiFi 404</title>
+	<title>Allocations 404</title>
 
 	<style type="text/css">
 	body {
@@ -52,7 +52,7 @@ header("HTTP/1.1 404 Not Found");
 <div id="container">
 	<h1>Not Found</h1>
 	<p id="body">The page you are looking for is not found - HTTP 404</p>
-	<p class="footer">Copyrights &copy; MikiFi</p>
+	<p class="footer">Copyrights &copy; Allocations</p>
 </div>
 
 </body>

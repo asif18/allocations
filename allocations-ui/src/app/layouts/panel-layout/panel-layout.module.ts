@@ -22,6 +22,7 @@ import { DashboardComponent } from './dashboard';
 import { PanelLayoutRoutes } from './panel-layout.routes';
 import { AuthGuard } from '../../_guards';
 import { DashboardResolver } from '../../_classes';
+import { MaterialModule } from '../../material.module';
 
 import { AllocationsComponent } from './allocations';
 import { AllocationsListComponent } from './allocations-list';
@@ -29,32 +30,9 @@ import { AllocatedListComponent } from './allocated-list';
 import { DeliveredListComponent } from './delivered-list';
 import { YardsComponent } from './yards';
 import { DestinationsComponent } from './destinations';
-
-import { InstancesListComponent } from './instances-list';
-import { MaterialModule } from '../../material.module';
-import { InstanceComponent } from './instance';
-import { UsersListComponent } from './users-list';
-import { ClientComponent } from './client';
-import { ClientsListComponent } from './clients-list';
-import { SettingsComponent } from './settings';
-import { DataUsageLimitsComponent } from './data-usage-limits';
 import { StaffsListComponent } from './staffs-list';
-import { RoomComponent } from './room';
-import { RoomsListComponent } from './rooms-list';
-import { SendOtpComponent } from './send-otp';
+import { SettingsComponent } from './settings';
 import { DisableControlDirective, UppercaseControlDirective } from '../../_directives';
-import { ActiveUsersListComponent } from './active-users-list';
-import { ProfileListComponent } from './profile-list';
-import { ProfileComponent } from './profile';
-import { HostsListComponent } from './hosts-list';
-import { IpBindingComponent } from './ip-binding';
-import { IpBindingListComponent } from './ip-binding-list';
-import { OtpLogListComponent } from './otp-log-list';
-import { WifiUsageLogListComponent } from './wifi-usage-log-list';
-import { WifiUserSettingsComponent } from './wifi-user-settings';
-import { AccessPointManagerComponent } from './access-point-manager';
-import { AccessPointManagerListComponent } from './access-point-manager-list';
-import { WebLogsComponent } from './web-logs/web-logs.component';
 
 @NgModule({
   imports: [
@@ -71,39 +49,16 @@ import { WebLogsComponent } from './web-logs/web-logs.component';
   declarations: [
     PanelLayoutComponent,
     DashboardComponent,
-    InstancesListComponent,
-    InstanceComponent,
-    UsersListComponent,
-    ClientComponent,
-    ClientsListComponent,
     SettingsComponent,
-    DataUsageLimitsComponent,
-    
     AllocationsComponent,
     AllocationsListComponent,
     AllocatedListComponent,
     DeliveredListComponent,
     YardsComponent,
     DestinationsComponent,
-
     StaffsListComponent,
-    RoomComponent,
-    RoomsListComponent,
-    SendOtpComponent,
     DisableControlDirective,
-    UppercaseControlDirective,
-    ActiveUsersListComponent,
-    ProfileListComponent,
-    ProfileComponent,
-    HostsListComponent,
-    IpBindingComponent,
-    IpBindingListComponent,
-    OtpLogListComponent,
-    WifiUsageLogListComponent,
-    WifiUserSettingsComponent,
-    AccessPointManagerComponent,
-    AccessPointManagerListComponent,
-    WebLogsComponent
+    UppercaseControlDirective
   ],
   providers: [
     AuthGuard,

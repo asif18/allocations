@@ -20,19 +20,8 @@ export * from './yards.service';
 export * from './destinations.service';
 export * from './settings.service';
 
-export * from './instance.service';
 export * from './data-share.service';
 export * from './utility.service';
-export * from './client.service';
-export * from './data-usage-limits.service';
 export * from './staff.service';
-export * from './room.service';
-export * from './profile.service';
-export * from './send-otp.service';
-export * from './active-users.service';
-export * from './host.service';
-export * from './ip-binding.service';
 export * from './dashboard.service';
-export * from './otp-log-list.service';
-export * from './wifi-usage-list.service';
-export * from './access-point-manager.service';
+
