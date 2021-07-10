@@ -27,6 +27,10 @@ declare interface Staffs {
   email: string;
 }
 
+declare interface FormDependencyData {
+  roles: Array<string>;
+}
+
 @Component({
   selector: 'app-staff',
   templateUrl: './staffs-list.component.html',
@@ -39,10 +43,13 @@ export class StaffsListComponent implements OnInit, AfterViewInit, OnDestroy {
   public form: FormGroup;
   private submitted = false;
   private subscriptions: Subscription[] = [];
-  public displayedColumns: string[] = ['username', 'name', 'email', 'status', 'edit'];
+  public displayedColumns: string[] = ['username', 'name', 'email', 'role', 'status', 'edit'];
   public data: Staffs[] = [];
   public resultsLength = 0;
   public pageSize: number = 10;
+  public formDependencyData: FormDependencyData = {
+    roles: ['SUPERADMIN_STAFF', 'STAFF']
+  };
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
@@ -113,6 +120,11 @@ export class StaffsListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private initForm() {
     this.form = this.formBuilder.group({
+      role: new FormControl(null, {
+        validators: [
+          Validators.required
+        ]
+      }),
       name: new FormControl(null, {
         validators: [
           Validators.required,

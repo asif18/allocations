@@ -39,16 +39,12 @@ class Staff extends REST_Controller {
    */
   public function saveStaff_post() {
     $decodedToken = AUTHORIZATION::validateToken();
-    $acceptedKeys = array('name*', 'email*', 'username*', 'password*');
+    $acceptedKeys = array('role', 'name*', 'email*', 'username*', 'password*');
     $input = $this->post();
     AUTHORIZATION::validateRequestInput($acceptedKeys, $input);
     $userInfo = AUTHORIZATION::validateUser($decodedToken->id);
 
-    if ($userInfo['role'] !==  SUPERADMIN && 
-      $userInfo['role'] !== SUPERADMIN_STAFF && 
-      $userInfo['role'] !== CLIENTADMIN && 
-      $userInfo['role'] !== CLIENTADMIN_STAFF) {
-
+    if ($userInfo['role'] !==  SUPERADMIN && $userInfo['role'] !== SUPERADMIN_STAFF) {
       $output = array('status' => false);
       $httpCode = REST_Controller::HTTP_UNAUTHORIZED;
       $this->response($output, $httpCode);
@@ -70,15 +66,13 @@ class Staff extends REST_Controller {
     ];
     $password = password_hash(base64_decode($input['password']), PASSWORD_BCRYPT, $options);
 
-    $role = ($userInfo['role'] === SUPERADMIN) ? SUPERADMIN_STAFF : CLIENTADMIN_STAFF;
-
     $insertData = array(
       'parent_id' => $userInfo['id'],
       'name' => $input['name'],
       'email' => $input['email'],
       'username' => $input['username'],
       'password' => $password,
-      'role' => $role,
+      'role' => $input['role'],
       'type' => 'STAFF',
       'status' => 'ACT',
       'created_by' => $userInfo['id'],
@@ -114,7 +108,8 @@ class Staff extends REST_Controller {
     }
 
     $query = "SELECT
-      id 
+      id,
+      status  
       FROM
         {$this->tblprefix}users
       WHERE 
@@ -128,15 +123,16 @@ class Staff extends REST_Controller {
       $this->response($output, $httpCode);
     }
 
-    $updatetData = array('status' => 'DEL');
+    $status = ($staff[0]['status'] === 'ACT') ? 'IAT' : 'ACT';
+    $updatetData = array('status' => $status);
 
     $where = array('id' => $id);
-    $status = $this->StaffModel->updateStaff($updatetData, $where);
+    $this->StaffModel->updateStaff($updatetData, $where);
     
-    log_message('info', 'removeDataUsageLimit_get data usage limit updated - '.$id);
+    log_message('info', 'enableDisableStaff_get stafff updated - '.$id);
     $output = array(
       'status' => true,
-      'message' => 'deleted successfully');
+      'message' => 'updated successfully');
     $httpCode = REST_Controller::HTTP_OK;
     $this->response($output, $httpCode);
   }
@@ -152,11 +148,7 @@ class Staff extends REST_Controller {
     AUTHORIZATION::validateRequestInput($acceptedKeys, $input);
     $userInfo = AUTHORIZATION::validateUser($decodedToken->id);
     
-    if ($userInfo['role'] !==  SUPERADMIN && 
-      $userInfo['role'] !== SUPERADMIN_STAFF && 
-      $userInfo['role'] !== CLIENTADMIN && 
-      $userInfo['role'] !== CLIENTADMIN_STAFF) {
-
+    if ($userInfo['role'] !==  SUPERADMIN && $userInfo['role'] !== SUPERADMIN_STAFF) {
       $output = array('status' => false);
       $httpCode = REST_Controller::HTTP_UNAUTHORIZED;
       $this->response($output, $httpCode);
@@ -170,6 +162,7 @@ class Staff extends REST_Controller {
       name,
       email,
       username,
+      role,
       status
       FROM
         {$this->tblprefix}users

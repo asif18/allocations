@@ -19,7 +19,6 @@ import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms'
 import { merge, Subscription, noop, of as observableOf, forkJoin } from 'rxjs';
 import { catchError, map, startWith, switchMap, finalize } from 'rxjs/operators';
 import { Title } from '@angular/platform-browser';
-import { Router } from '@angular/router';
 import { faFileExcel, faSearch, faTimes, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import * as _ from 'lodash';
 import { SnackbarService, AllocationsService, DestinationsService, DataShareService, UtilityService, YardsService } 
@@ -54,18 +53,17 @@ declare interface FormDependencyData {
   yards: object[];
   tos: object[];
   statuses: object[];
-  isDeliveryButtonDisabled?: boolean;
 }
 
 @Component({
-  selector: 'app-allocated-list',
-  templateUrl: './allocated-list.component.html',
-  styleUrls: ['./allocated-list.component.scss']
+  selector: 'app-delivered-list',
+  templateUrl: './delivered-list.component.html',
+  styleUrls: ['./delivered-list.component.scss']
 })
-export class AllocatedListComponent implements OnInit, AfterViewInit, OnDestroy  {
+export class DeliveredListComponent implements OnInit, AfterViewInit, OnDestroy  {
 
-  public displayedColumns: string[] = ['select', 'container_number', 'destinationName', 'yardName', 'chassis_number',
-    'seal_number', 'openDate', 'expiryDate', 'action'];
+  public displayedColumns: string[] = ['container_number', 'destinationName', 'yardName', 'chassis_number',
+    'seal_number', 'openDate', 'expiryDate', 'deliveryDate', 'deliveryUpdatedBy', 'action'];
   public data: Allocations[] = [];
   public isFormLoading: boolean = false;
   public form: FormGroup;
@@ -78,17 +76,12 @@ export class AllocatedListComponent implements OnInit, AfterViewInit, OnDestroy 
     destinations: [],
     yards: [],
     tos: [],
-    statuses: [],
-    isDeliveryButtonDisabled: true
+    statuses: []
   };
   private onSearch: EventEmitter<any> = new EventEmitter();
-  public selection = new SelectionModel<Allocations>(true, []);
-  private allocateModalRef: MatDialogRef<TemplateRef<any>>;
   
-  @ViewChild('allocateModal', {static: true}) allocateModal: TemplateRef<any>;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
-  @ViewChild('searchInput', {static: true}) searchInput: ElementRef;
 
   constructor(
     private titleService: Title,
@@ -103,7 +96,7 @@ export class AllocatedListComponent implements OnInit, AfterViewInit, OnDestroy 
     private yardsService: YardsService) {}
 
   ngOnInit(): void {
-    this.titleService.setTitle('Allocations List');
+    this.titleService.setTitle('Delivered List');
     this.subscriptions.push(this.dataShareService.receivedMessage.subscribe(data => {
       if (_.isNull(data)) {
         return;
@@ -224,34 +217,19 @@ export class AllocatedListComponent implements OnInit, AfterViewInit, OnDestroy 
       destination: new FormControl(null),
       yard: new FormControl(null),
       to: new FormControl(null),
-      status: new FormControl('ALC')
+      status: new FormControl('DLY')
     });
   }
 
   private resetForm(): void {
     this.form.reset();
     this.form.patchValue({
-      status: 'ALC'
+      status: 'DLY'
     })
   }
 
   get f() {
     return this.form.controls;
-  }
-
-  private initDeliveryForm() {
-    this.deliveryForm = this.formBuilder.group({
-      deliveryDate: new FormControl(new  Date(), {
-        validators: [
-          Validators.required
-        ]
-      }),
-      ids: new FormControl([])
-    });
-  }
-
-  get df() {
-    return this.deliveryForm.controls;
   }
 
   public onClearSearch(): void {
@@ -286,32 +264,7 @@ export class AllocatedListComponent implements OnInit, AfterViewInit, OnDestroy 
       data: {component: 'AllocationsListComponent', items}
     });
   }
-
-  public isAllSelected() {
-    const numSelected = _.size(this.selection.selected);
-    const numRows = this.data.length;
-    return numSelected === numRows;
-  }
-
   
-  public masterToggle() {
-    this.isAllSelected() ? this.selection.clear() : this.data.forEach(row => this.selection.select(row));
-  }
-
-  public onSelectAll(event: any) {
-    const evt = event ? this.masterToggle() : null;
-    this.enableDisableDeliveryButton();
-  }
-
-  public onSelect(event: any, row: any): void {
-    const evt = event ? this.selection.toggle(row) : null;
-    this.enableDisableDeliveryButton();
-  }
-
-  private enableDisableDeliveryButton() {
-    this.formDependencyData.isDeliveryButtonDisabled = (_.size(this.selection.selected) === 0);
-  }
-
   public deleteAllocation(id: string) {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       data:{
@@ -337,35 +290,7 @@ export class AllocatedListComponent implements OnInit, AfterViewInit, OnDestroy 
       }
     }));
   }
-
-  public openDeliveryModal(): void {
-    this.allocateModalRef = this.dialog.open(this.allocateModal);
-    this.initDeliveryForm();
-  }
-
-  public onDeliveryFormSubmit(): void {
-    if (this.deliveryForm.invalid) {
-      return;
-    }
-
-    const ids = _.map(this.selection.selected, (item) => item.id);
-    this.df.ids.setValue(ids);
-    this.isFormLoading = true;
-    this.subscriptions.push(this.allocationsService.markAsDelivered(this.deliveryForm.value)
-      .pipe(finalize(() => {
-        this.isFormLoading = false;
-        this.allocateModalRef.close();
-        this.selection.clear();
-        this.enableDisableDeliveryButton();
-        this.onSearch.emit(this.form.value);
-      }))
-      .subscribe((response: DefaultApiResponse) => {
-        if (response) {
-          this.snackBar.show(response.message, response.status ? 'success' : 'danger');
-        }
-      }, () => noop()));
-  }
-
+  
   ngOnDestroy() {
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }

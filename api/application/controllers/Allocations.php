@@ -53,6 +53,26 @@ class Allocations extends REST_Controller {
       $this->response($output, $httpCode);
     }
 
+    $query = "SELECT
+      id 
+      FROM
+        {$this->tblprefix}allocations
+      WHERE 
+        container_number = '{$input['containerNumber']}'
+        AND (status = 'NAL' OR status = 'ALC')";
+
+    
+    $isExist = $this->AllocationsModel->getAllAllocations($query);
+
+    if (count($isExist) > 0) {
+      log_message('info', 'saveAllocation_post container exist - '.$input['containerNumber']);
+      $output = array(
+        'status' => false,
+        'message' => 'cotainer already exist');
+      $httpCode = REST_Controller::HTTP_OK;
+      $this->response($output, $httpCode);
+    }
+
     $insertData = array(
       'container_number'      => $input['containerNumber'],
       'destination_id'        => $input['destination'],
@@ -277,14 +297,16 @@ class Allocations extends REST_Controller {
       al.is_rail_bill, 
       asd.name as allocationStatus, 
       al.status, 
-      u.name AS createdBy,  
+      u.name AS createdBy, 
+      ud.name AS deliveryUpdatedBy, 
       al.datetime  AS created_datetime
       FROM
         {$this->tblprefix}allocations al 
         LEFT JOIN {$this->tblprefix}destinations ds ON ds.id = al.destination_id 
         LEFT JOIN {$this->tblprefix}yards ys ON ys.id = al.yard_id 
         LEFT JOIN {$this->tblprefix}allocation_statuses asd ON asd.id = al.allocation_status_id 
-        LEFT JOIN {$this->tblprefix}users u ON u.id = al.created_by  
+        LEFT JOIN {$this->tblprefix}users u ON u.id = al.created_by 
+        LEFT JOIN {$this->tblprefix}users ud ON ud.id = al.delivery_updated_by AND al.delivery_updated_by IS NOT NULL
       WHERE ");
 
     if (is_array($input['searchBy'])) {

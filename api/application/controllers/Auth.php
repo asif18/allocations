@@ -115,6 +115,7 @@ class Auth extends REST_Controller {
       'allocations'       => [SUPERADMIN, SUPERADMIN_STAFF, STAFF],
       'notAllocatedList'  => [SUPERADMIN, SUPERADMIN_STAFF, STAFF],
       'allocatedList'     => [SUPERADMIN, SUPERADMIN_STAFF, STAFF],
+      'deliveredList'     => [SUPERADMIN, SUPERADMIN_STAFF, STAFF],
       'yards'             => [SUPERADMIN, SUPERADMIN_STAFF],
       'destinations'      => [SUPERADMIN, SUPERADMIN_STAFF],
       'staffsList'        => [SUPERADMIN, SUPERADMIN_STAFF],
@@ -226,6 +227,14 @@ class Auth extends REST_Controller {
             'class' => '',
             'isDisabled' => false
           ),
+          array(
+            'name' => 'deliveredList',
+            'path' => '/panel/delivered-list',
+            'caption' => 'Delivered list',
+            'icon' => 'meeting_room',
+            'class' => '',
+            'isDisabled' => false
+          )
         )
       ),
       array(

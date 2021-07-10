@@ -22,6 +22,7 @@ import { DataUsageLimitsComponent } from './data-usage-limits';
 import { AllocationsComponent } from './allocations';
 import { AllocationsListComponent } from './allocations-list';
 import { AllocatedListComponent } from './allocated-list';
+import { DeliveredListComponent } from './delivered-list'
 import { YardsComponent } from './yards';
 import { DestinationsComponent } from './destinations';
 
@@ -264,6 +265,15 @@ export const PanelLayoutRoutes: Routes = [
         data: {
           title: 'Allocated List',
           pageName: 'allocatedList'
+        }
+      },
+      {
+        path: 'delivered-list',
+        component: DeliveredListComponent,
+        canActivate: [AuthGuard],
+        data: {
+          title: 'Delivered List',
+          pageName: 'deliveredList'
         }
       },
       {
