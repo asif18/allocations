@@ -31,8 +31,15 @@
                   </mat-form-field>
                 </div>
 
-                <div class="col-md-12">
-                  <button mat-raised-button type="submit" class="btn btn-danger float-right">Login</button>
+                <div class="col">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <a class="clickable" (click)="onForgotPasswordLinkClick()">Forgot Password?</a>
+                    </div>
+                    <div>
+                      <button mat-raised-button type="submit" class="btn btn-danger">Login</button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </form>
@@ -42,3 +49,28 @@
     </div>
   </div>
 </div>
+
+<ng-template #forgotPasswordModal>
+  <h2 mat-dialog-title>Forgot Password</h2>
+  <div class="position-relative">
+    <app-preloader [showPreLoader]="isForgotPasswordFormLoading"></app-preloader>
+    <form [formGroup]="forgotPasswordForm" (ngSubmit)="onForgotPasswordFormSubmit()">
+      <mat-dialog-content>
+        <div class="row">
+          <div class="col">
+            <mat-form-field>
+              <input matInput placeholder="Username*" formControlName="username" maxlength="35" />
+              <mat-error *ngIf="f.username.errors">
+                Required. Space not allowed - min(5) - max(35) chars
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+      </mat-dialog-content>
+      <mat-dialog-actions align="center">
+        <button matRipple type="submit" class="btn btn-danger">Submit</button>
+        <button matRipple mat-dialog-close class="btn">Cancel</button>
+      </mat-dialog-actions>
+    </form>
+  </div>
+</ng-template>

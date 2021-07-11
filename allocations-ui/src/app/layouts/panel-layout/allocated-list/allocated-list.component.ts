@@ -19,7 +19,6 @@ import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms'
 import { merge, Subscription, noop, of as observableOf, forkJoin } from 'rxjs';
 import { catchError, map, startWith, switchMap, finalize } from 'rxjs/operators';
 import { Title } from '@angular/platform-browser';
-import { Router } from '@angular/router';
 import { faFileExcel, faSearch, faTimes, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import * as _ from 'lodash';
 import { SnackbarService, AllocationsService, DestinationsService, DataShareService, UtilityService, YardsService } 

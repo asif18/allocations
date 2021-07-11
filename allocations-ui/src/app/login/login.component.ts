@@ -10,12 +10,13 @@
  * Email: mohamedasif18@gmail.com
  */
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { noop } from 'rxjs';
 import { finalize } from 'rxjs/operators';
+import { MatDialog, MatDialogRef } from '@angular/material';
 import { AuthenticationService, SnackbarService } from '../_services';
 
 declare interface LoginResponse {
@@ -32,16 +33,21 @@ declare interface LoginResponse {
 export class LoginComponent implements OnInit {
 
   public form: FormGroup;
+  public forgotPasswordForm: FormGroup;
   public isFormLoading: boolean = false;
+  public isForgotPasswordFormLoading: boolean = false;
   private returnUrl: string;
+  private modalRef: MatDialogRef<TemplateRef<any>>;
 
+  @ViewChild('forgotPasswordModal', {static: true}) forgotPasswordModal: TemplateRef<any>;
   constructor(
     private formBuilder: FormBuilder,
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private titleService: Title,
-    private authenticationService: AuthenticationService,
-    private snackBar: SnackbarService
+    private dialog: MatDialog,
+    private snackBar: SnackbarService,
+    private authenticationService: AuthenticationService
   ) {
     if (this.authenticationService.getAccessToken()) {
       this.router.navigate(['/panel/dashboard']);
@@ -63,6 +69,21 @@ export class LoginComponent implements OnInit {
 
   get f() { return this.form.controls; }
 
+  public onForgotPasswordLinkClick(): void {
+    this.modalRef = this.dialog.open(this.forgotPasswordModal);
+    this.initPasswordForm();
+  }
+
+  private initPasswordForm() {
+    this.forgotPasswordForm = this.formBuilder.group({
+      username: new FormControl(null, [
+        Validators.minLength(5),
+        Validators.maxLength(35),
+        Validators.pattern(/^\S*$/)
+      ])
+    });
+  }
+  
   onSubmit(): void {
     if (this.form.invalid) {
       return;
@@ -78,6 +99,24 @@ export class LoginComponent implements OnInit {
           this.router.navigate([this.returnUrl]);
         } else {
           this.snackBar.show('Login unsuccessfull', 'danger');
+        }
+      }, () => noop());
+  }
+
+  onForgotPasswordFormSubmit() : void {
+    if (this.forgotPasswordForm.invalid) {
+      return;
+    }
+
+    this.isForgotPasswordFormLoading = true;
+    this.authenticationService.forgotPassword(this.forgotPasswordForm.value)
+      .pipe(finalize(() => {
+        this.isForgotPasswordFormLoading = false;
+        this.modalRef.close();
+      }))
+      .subscribe((response: LoginResponse) => {
+        if (response) {
+          this.snackBar.show(response.message, response.status ? 'success' : 'danger');
         }
       }, () => noop());
   }

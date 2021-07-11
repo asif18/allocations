@@ -78,4 +78,8 @@ export class AuthenticationService implements Resolve<any> {
   getMenuItems(): Observable<any> {
     return this.http.get(`${environment.apiUrl}/auth/getMenuItems`);
   }
+
+  forgotPassword(postData: any): Observable<any> {
+    return this.http.post<any>(`${environment.apiUrl}/auth/forgotPassword`, postData);
+  }
 }

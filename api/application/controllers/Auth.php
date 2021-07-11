@@ -67,6 +67,49 @@ class Auth extends REST_Controller {
   }
 
   /**
+   * URL: /auth/forgotPassword
+   * Method: POST
+   */
+  public function forgotPassword_post() {
+    $acceptedKeys = array('username*');
+    $input = $this->post();
+    AUTHORIZATION::validateRequestInput($acceptedKeys, $input);
+    $httpCode = REST_Controller::HTTP_OK;
+
+    $userInfo = $this->UserModel->getUser(array('username' => $input['username']));
+
+    if(!$userInfo) {
+      $output = array(
+        'status' => false,
+        'message' => 'invalid username/user not exist');
+      $this->response($output, $httpCode);
+    }
+
+    $passwordRaw = $this->utility->generateRandomString();
+    $options = [
+      'cost' => 12,
+    ];
+    $password = password_hash($this->utility->generateRandomString(), PASSWORD_BCRYPT, $options);
+
+    $this->UserModel->updateUser(array('password' => $password), array('id' => $userInfo['id']));
+    $message = $this->forgotPasswordEmailTemplate($userInfo['name'], $passwordRaw);
+    $headers  = "From: slnyallocations <support@slnyallocations.com>\n";
+    $headers .= "X-Sender: slnyallocations <support@slnyallocations.com>\n";
+    $headers .= 'X-Mailer: PHP/' . phpversion();
+    $headers .= "X-Priority: 1\n";
+    $headers .= "Return-Path: support@slnyallocations.com\n";
+    $headers .= "MIME-Version: 1.0\r\n";
+    $headers .= "Content-Type: text/html; charset=iso-8859-1\n";
+    mail($userInfo['email'], 'Allocations Password Reset', $message, $headers);
+
+    $output = array(
+      'status' => true,
+      'message' => 'password reset email sent successfully'
+    );
+    $this->response($output, $httpCode);
+  }
+
+  /**
    * URL: /auth/verifyPageAccess
    * Method: GET
    */
@@ -295,5 +338,45 @@ class Auth extends REST_Controller {
     );
     $httpCode = REST_Controller::HTTP_OK;
     $this->response($output, $httpCode);
+  }
+
+  public function forgotPasswordEmailTemplate($name, $password) {
+    return '<style>
+      .mail {
+        font-family:Arial, Helvetica, sans-serif;
+        font-size:13px;
+        color:#000000;
+        background:#FFF;
+        border:dashed 2px #ec407a;
+        padding:5px;
+        width:100%;
+      }
+      .line {
+        border-top:3px solid #1794b7;
+      }
+      .talign_center {
+        text-align:center;
+      }
+    </style>
+    <table class="mail">
+      <tr>
+        <td>Hi '.$name.',</td>
+      </tr>
+      <tr>
+        <td>Below is your new password</td>
+      </tr>
+      <tr>
+        <td><p>&nbsp;</p></td>
+      </tr>
+      <tr>
+        <td colspan="2"><strong>'.$password.'</strong></td>
+      </tr>
+      <tr>
+        <td><p>&nbsp;</p></td>
+      </tr>
+      <tr>
+        <td colspan="2"><div class="line"></div></td>
+      </tr>
+    </table>';
   }
 }

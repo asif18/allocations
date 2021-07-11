@@ -27,8 +27,46 @@ class Test extends CI_Controller {
     echo '<br/>';
     echo password_verify('admin', $pass);
 
-    each([1, 2, 3], function (int $item) {
-      var_dump($item);
-    });
+    echo $this->forgotPasswordEmailTemplate('name', '2114');
  }
+
+ public function forgotPasswordEmailTemplate($name, $password) {
+  return '<style>
+    .mail {
+      font-family:Arial, Helvetica, sans-serif;
+      font-size:13px;
+      color:#000000;
+      background:#FFF;
+      border:dashed 2px #ec407a;
+      padding:5px;
+      width:100%;
+    }
+    .line {
+      border-top:3px solid #1794b7;
+    }
+    .talign_center {
+      text-align:center;
+    }
+    </style>
+    <table class="mail">
+    <tr>
+      <td>Hi '.$name.',</td>
+    </tr>
+    <tr>
+      <td>Below is your new password</td>
+    </tr>
+    <tr>
+      <td><p>&nbsp;</p></td>
+    </tr>
+    <tr>
+      <td colspan="2"><strong>'.$password.'</strong></td>
+    </tr>
+    <tr>
+      <td><p>&nbsp;</p></td>
+    </tr>
+    <tr>
+      <td colspan="2"><div class="line"></div></td>
+    </tr>
+    </table>';
+  }
 }
