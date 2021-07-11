@@ -89,7 +89,7 @@ class Auth extends REST_Controller {
     $options = [
       'cost' => 12,
     ];
-    $password = password_hash($this->utility->generateRandomString(), PASSWORD_BCRYPT, $options);
+    $password = password_hash($passwordRaw, PASSWORD_BCRYPT, $options);
 
     $this->UserModel->updateUser(array('password' => $password), array('id' => $userInfo['id']));
     $message = $this->forgotPasswordEmailTemplate($userInfo['name'], $passwordRaw);
