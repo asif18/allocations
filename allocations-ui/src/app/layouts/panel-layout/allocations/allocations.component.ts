@@ -103,7 +103,6 @@ export class AllocationsComponent implements OnInit, OnDestroy {
         validators: [
           Validators.required,
           Validators.maxLength(11),
-          Validators.minLength(11),
           Validators.pattern(/^[A-Z0-9]+$/)
         ]
       }),

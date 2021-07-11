@@ -9,9 +9,9 @@
                 <div class="row d-flex align-items-center">
                   <div class="col">
                     <mat-form-field>
-                      <input matInput placeholder="Container Number" formControlName="containerNumber" uppercase maxlength="7" />
+                      <input matInput placeholder="Container Number" formControlName="containerNumber" uppercase maxlength="11" />
                       <mat-error *ngIf="f.containerNumber.errors">
-                        Required. Alphanumeric - no space allowed - exact(7) chars
+                        Required. Alphanumeric - no space allowed - max(11) chars
                       </mat-error>
                     </mat-form-field>
                   </div>
