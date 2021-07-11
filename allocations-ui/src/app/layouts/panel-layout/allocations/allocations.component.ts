@@ -102,8 +102,8 @@ export class AllocationsComponent implements OnInit, OnDestroy {
       containerNumber: new FormControl(null, {
         validators: [
           Validators.required,
-          Validators.maxLength(7),
-          Validators.minLength(7),
+          Validators.maxLength(11),
+          Validators.minLength(11),
           Validators.pattern(/^[A-Z0-9]+$/)
         ]
       }),

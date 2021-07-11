@@ -216,8 +216,8 @@ export class AllocationsListComponent implements OnInit, AfterViewInit, OnDestro
     this.form = this.formBuilder.group({
       containerNumber: new FormControl(null, {
         validators: [
-          Validators.minLength(7),
-          Validators.maxLength(7),
+          Validators.minLength(11),
+          Validators.maxLength(11),
           Validators.pattern(/^[A-Z0-9]+$/)
         ]
       }),
