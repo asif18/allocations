@@ -153,9 +153,6 @@ class Staff extends REST_Controller {
       $httpCode = REST_Controller::HTTP_UNAUTHORIZED;
       $this->response($output, $httpCode);
     }
-    
-
-    $role = ($userInfo['role'] === SUPERADMIN) ? SUPERADMIN_STAFF : CLIENTADMIN_STAFF;
 
     $query = array("SELECT
       id,
@@ -167,9 +164,7 @@ class Staff extends REST_Controller {
       FROM
         {$this->tblprefix}users
       WHERE
-        parent_id = '{$userInfo['id']}' 
-      AND 
-        role = '${role}' ");
+        parent_id = '{$userInfo['id']}'");
 
     if ($input['searchBy']) {
       array_push($query, 

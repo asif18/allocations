@@ -14,38 +14,15 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { DefaultApiResponse } from '../_models';
-import { AuthenticationService } from './authentication.service';
-import { UtilityService } from './utility.service';
-
-declare var EventSource;
 
 @Injectable({
   providedIn: 'root'
 })
 export class DashboardService {
 
-  private es: EventSource;
-
-  constructor(
-    private http: HttpClient,
-    private authenticationService: AuthenticationService,
-    private utilityService: UtilityService,
-    private zone: NgZone) {
-    }
-
-  getInterfaces() {
-    return this.http.get<DefaultApiResponse>(`${environment.apiUrl}/dashboard/getInterfaces`);
-  }
+  constructor(private http: HttpClient) {}
 
   getDashboardData(): Observable<any> {
     return this.http.get<DefaultApiResponse>(`${environment.apiUrl}/dashboard`);
-  }
-
-  closeConnection() {
-    this.es.close();
-  }
-
-  private getEventSource(url: string): EventSource {
-    return new EventSource(url);
   }
 }

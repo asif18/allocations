@@ -140,36 +140,4 @@ class AUTHORIZATION {
     }
     return $userInfo;
   }
-
-  public static function validateMikInstance($userInfo) {
-    $CI =& get_instance();
-    $error = null;
-    
-    $settings = json_decode($userInfo['settings'], true);
-    
-    if(!is_array($settings) && !$settings['activeInstanceId']) {
-      log_message('error', 'invalid settings passed - '. print_r($settings, true));
-      $CI->output->set_status_header(200);
-      exit(json_encode(array('status' => false, 'message' => 'No active instance - set it in `settings` page')));
-    }
-
-    $CI->load->model('InstanceModel');
-    $instance = $CI->InstanceModel->getInstance(array('id' => $settings['activeInstanceId']));
-
-    if (!$instance) {
-      $error = 'invalid instance - ';
-    }
-
-    if ($userInfo['status'] !== 'ACT') {
-      $error = 'Not an active instance - ';
-    }
-
-    if ($error) {
-      log_message('error', $error . ' - ' . print_r($settings, true));
-      $CI->output->set_status_header(200);
-      exit(json_encode(array('status' => false, 'message' => $error)));
-    }
-
-    return $instance;
-  }
 }

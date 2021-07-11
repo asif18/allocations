@@ -6,14 +6,14 @@
           <div class="mat-card-header mat-card-header-warning mat-card-header-icon">
             <app-preloader [showPreLoader]="isFormLoading"></app-preloader>
             <div class="mat-card-icon">
-              <fa-icon [icon]="faIcons.faUserCheck" size="2x"></fa-icon>
+              <fa-icon [icon]="faIcons.faFileContract" size="2x"></fa-icon>
             </div>
-            <h3 class="mat-card-title">{{ dashboardData.activeUsersCount }}</h3>
+            <h3 class="mat-card-title">{{ dashboardData.allAllocationsCount }}</h3>
           </div>
           <div class="mat-card-footer">
             <div class="stats">
               <i class="material-icons text-info">star</i>
-              Active Users
+              All Allocations
             </div>
           </div>
         </div>
@@ -23,14 +23,14 @@
           <div class="mat-card-header mat-card-header-success mat-card-header-icon">
             <app-preloader [showPreLoader]="isFormLoading"></app-preloader>
             <div class="mat-card-icon">
-              <fa-icon [icon]="faIcons.faNetworkWired" size="2x"></fa-icon>
+              <fa-icon [icon]="faIcons.faTruckPickup" size="2x"></fa-icon>
             </div>
-            <h3 class="mat-card-title">{{ dashboardData.dhcpLeasesCount }}</h3>
+            <h3 class="mat-card-title">{{ dashboardData.notAllocatedCount }}</h3>
           </div>
           <div class="mat-card-footer">
             <div class="stats">
               <i class="material-icons text-info">star</i>
-              Allocations
+              Not Allocated
             </div>
           </div>
         </div>
@@ -40,14 +40,14 @@
           <div class="mat-card-header mat-card-header-danger mat-card-header-icon">
             <app-preloader [showPreLoader]="isFormLoading"></app-preloader>
             <div class="mat-card-icon">
-              <fa-icon [icon]="faIcons.faTachometerAlt" size="2x"></fa-icon>
+              <fa-icon [icon]="faIcons.faTruck" size="2x"></fa-icon>
             </div>
-            <h3 class="mat-card-title">{{ dashboardData.cpuLoad }}</h3>
+            <h3 class="mat-card-title">{{ dashboardData.allocatedCount }}</h3>
           </div>
           <div class="mat-card-footer">
             <div class="stats">
-                <i class="material-icons text-info">star</i>
-              Yards
+              <i class="material-icons text-info">star</i>
+              Allocated
             </div>
           </div>
         </div>
@@ -57,14 +57,14 @@
           <div class="mat-card-header mat-card-header-danger mat-card-header-icon">
             <app-preloader [showPreLoader]="isFormLoading"></app-preloader>
             <div class="mat-card-icon">
-              <fa-icon [icon]="faIcons.faClock" size="2x"></fa-icon>
+              <fa-icon [icon]="faIcons.faTruckMoving" size="2x"></fa-icon>
             </div>
-            <h3 class="mat-card-title">{{ dashboardData.uptime }}</h3>
+            <h3 class="mat-card-title">{{ dashboardData.deliveredCount }}</h3>
           </div>
             <div class="mat-card-footer">
               <div class="stats">
                 <i class="material-icons text-info">star</i>
-                System Time
+                Delivered
               </div>
             </div>
         </div>
@@ -74,14 +74,14 @@
           <div class="mat-card-header mat-card-header-warning mat-card-header-icon">
             <app-preloader [showPreLoader]="isFormLoading"></app-preloader>
             <div class="mat-card-icon">
-              <fa-icon [icon]="faIcons.faCompactDisc" size="2x"></fa-icon>
+              <fa-icon [icon]="faIcons.faMapMarkerAlt" size="2x"></fa-icon>
             </div>
-            <h3 class="mat-card-title">{{ dashboardData.freeMemory }}</h3>
+            <h3 class="mat-card-title">{{ dashboardData.yardsCount }}</h3>
           </div>
             <div class="mat-card-footer">
               <div class="stats">
                 <i class="material-icons text-info">star</i>
-                Expired Allocations
+                Yards
               </div>
             </div>
         </div>
@@ -91,32 +91,17 @@
           <div class="mat-card-header mat-card-header-success mat-card-header-icon">
             <app-preloader [showPreLoader]="isFormLoading"></app-preloader>
             <div class="mat-card-icon">
-              <fa-icon [icon]="faIcons.faMemory" size="2x"></fa-icon>
+              <fa-icon [icon]="faIcons.faMapMarkedAlt" size="2x"></fa-icon>
             </div>
-            <h3 class="mat-card-title">{{ dashboardData.freeHDDSpace }}</h3>
+            <h3 class="mat-card-title">{{ dashboardData.destinationsCount }}</h3>
           </div>
             <div class="mat-card-footer">
               <div class="stats">
                 <i class="material-icons text-info">star</i>
-                Free HDD Space
+                Destinations
               </div>
             </div>
         </div>
-      </div>
-    </div>
-    
-    <div class="row">
-      <div class="col-md-12">
-        <mat-card class="form-card">
-          <mat-card-header class="mat-card-header-danger">
-            <mat-card-title>Traffic</mat-card-title>
-          </mat-card-header>
-
-          <mat-card-content>
-            <app-preloader [showPreLoader]="isFormLoading"></app-preloader>
-            <div [chart]="chart"></div>
-          </mat-card-content>
-        </mat-card>
       </div>
     </div>
   </div>

@@ -128,9 +128,7 @@ class Auth extends REST_Controller {
    * Description: return access levels for user roles
    */
   private function getAccessLevels($role) {
-    return array(
-      'canRemoveRoom' => ($role === SUPERADMIN || $role === CLIENTADMIN)
-    );
+    return [];
   }
 
   /**

@@ -230,8 +230,7 @@ class Allocations extends REST_Controller {
     AUTHORIZATION::validateRequestInput($acceptedKeys, $input);
     $userInfo = AUTHORIZATION::validateUser($decodedToken->id);
     
-    if ($userInfo['role'] !==  SUPERADMIN && $userInfo['role'] !== SUPERADMIN_STAFF 
-        && $userInfo['role'] !== STAFF) {
+    if ($userInfo['role'] !==  SUPERADMIN && $userInfo['role'] !== SUPERADMIN_STAFF && $userInfo['role'] !== STAFF) {
       $output = array('status' => false);
       $httpCode = REST_Controller::HTTP_UNAUTHORIZED;
       $this->response($output, $httpCode);
@@ -274,7 +273,7 @@ class Allocations extends REST_Controller {
     AUTHORIZATION::validateRequestInput($acceptedKeys, $input);
     $userInfo = AUTHORIZATION::validateUser($decodedToken->id);
     
-    if ($userInfo['role'] !==  SUPERADMIN && $userInfo['role'] !== SUPERADMIN_STAFF) {
+    if ($userInfo['role'] !==  SUPERADMIN && $userInfo['role'] !== SUPERADMIN_STAFF && $userInfo['role'] !== STAFF) {
       $output = array('status' => false);
       $httpCode = REST_Controller::HTTP_UNAUTHORIZED;
       $this->response($output, $httpCode);

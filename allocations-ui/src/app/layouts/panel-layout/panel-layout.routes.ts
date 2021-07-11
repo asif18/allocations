@@ -23,7 +23,6 @@ import { StaffsListComponent } from './staffs-list';
 import { SettingsComponent } from './settings';
 import { AuthenticationService } from '../../_services';
 import { AuthGuard } from '../../_guards';
-import { DashboardResolver } from '../../_classes';
 
 export const PanelLayoutRoutes: Routes = [
   {
@@ -40,9 +39,6 @@ export const PanelLayoutRoutes: Routes = [
         path: 'dashboard',
         component: DashboardComponent,
         canActivate: [AuthGuard],
-        resolve: {
-          dashboardData: DashboardResolver
-        },
         data: {
           title: 'Dashboard',
           pageName: 'dashboard'

@@ -21,7 +21,6 @@ import { PanelLayoutComponent } from './panel-layout.component';
 import { DashboardComponent } from './dashboard';
 import { PanelLayoutRoutes } from './panel-layout.routes';
 import { AuthGuard } from '../../_guards';
-import { DashboardResolver } from '../../_classes';
 import { MaterialModule } from '../../material.module';
 
 import { AllocationsComponent } from './allocations';
@@ -61,8 +60,7 @@ import { DisableControlDirective, UppercaseControlDirective } from '../../_direc
     UppercaseControlDirective
   ],
   providers: [
-    AuthGuard,
-    DashboardResolver
+    AuthGuard
   ]
 })
 

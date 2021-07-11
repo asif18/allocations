@@ -12,38 +12,18 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
-import { faUserCheck, faNetworkWired, faTachometerAlt, faClock,
-  faCompactDisc, faMemory } from '@fortawesome/free-solid-svg-icons';
-import { Chart } from 'angular-highcharts';
-import * as Highcharts from 'highcharts';
+import { faFileContract, faTruckPickup, faTruck, faTruckMoving, faTruckLoading, faMapMarkerAlt, 
+  faMapMarkedAlt } from '@fortawesome/free-solid-svg-icons';
 import * as _ from 'lodash';
 import { DashboardService } from '../../../_services';
 
-Highcharts.setOptions({
-  time: {
-    useUTC: false
-  }
-});
-
-declare interface LineChartData {
-  rx: number;
-  tx: number;
-  status: boolean;
-  message: string;
-}
-
 declare interface DashboardData {
-  activeUsersCount?: number;
-  dhcpLeasesCount?: number;
-  cpuLoad?: string;
-  uptime?: string;
-  freeMemory?: string;
-  freeHDDSpace?: string;
-  lineChartData?: LineChartData;
-}
-
-declare interface FormDependencyData {
-  interfaces: Array<string>;
+  allAllocationsCount: number;
+  notAllocatedCount: number;
+  allocatedCount: number;
+  deliveredCount: number;
+  yardsCount: number;
+  destinationsCount: number;
 }
 
 @Component({
@@ -55,18 +35,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   public isFormLoading: boolean = true;
   public dashboardData: DashboardData = {
-    activeUsersCount: 0,
-    dhcpLeasesCount: 0,
-    cpuLoad: '0',
-    uptime: '0',
-    freeMemory: '0',
-    freeHDDSpace: '0',
-    lineChartData: null
+    allAllocationsCount: 0,
+    notAllocatedCount: 0,
+    allocatedCount: 0,
+    deliveredCount: 0,
+    yardsCount: 0,
+    destinationsCount: 0,
   };
   private subscriptions: Subscription[] = [];
-  public faIcons = {faUserCheck, faNetworkWired, faTachometerAlt, faClock, faCompactDisc, faMemory};
-  public chart: Chart;
-  public options: Highcharts.Options;
+  public faIcons = { faFileContract, faTruckPickup, faTruck, faTruckMoving, faTruckLoading, faMapMarkerAlt, faMapMarkedAlt };
 
   constructor(
     private titleService: Title,
@@ -78,37 +55,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.getDashboardData();
   }
 
-  private initLineChart() {
-    this.options = {
-      chart: {
-        type: 'line'
-      },
-      title: {
-        text: ''
-      },
-      credits: {
-        enabled: false
-      },
-      xAxis: {
-        type: 'datetime',
-        tickPixelInterval: 150
-      },
-      series: [{
-        name: 'RX',
-        data: [],
-        type: 'line'
-      },
-      {
-        name: 'TX',
-        data: [],
-        type: 'line'
-      }]
-    };
-    this.chart = new Chart(this.options);
-  }
-
   getDashboardData() {
-    this.initLineChart();
     this.subscriptions.push(this.dashboardService.getDashboardData()
       .subscribe((response) => {
         this.isFormLoading = false;

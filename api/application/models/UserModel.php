@@ -73,41 +73,5 @@ class UserModel extends CI_Model {
 	 */
 	public function updateUser($data, $where) {
 		$this->db->update($this->tblprefix.'users', $data, $where);
-		$user = $this->getWiFiUser($where);
-		return $user['id'];
-	}
-
-	/**
-	 * Get WiFi User
-	 *
-	 * @param $where
-	 * @type Array
-	 */
-	public function getWiFiUser($where) {
-		$query = $this->db->select('*')
-			->where($where)
-			->get($this->tblprefix.'wifi_users');
-		return $query->row_array();
-	}
-
-	/**
-	 * Insert wiFi user
-	 *
-	 * @param $data
-	 * @type Array
-	 */
-	public function insertWiFiUser($data) {
-		$this->db->insert($this->tblprefix.'wifi_users', $data);
-		return $this->db->insert_id();
-	}
-
-	/**
-	 * Update WiFi User
-	 *
-	 * @param $data, $where
-	 * @type Array, Array
-	 */
-	public function updateWiFiUser($data, $where) {
-		$this->db->update($this->tblprefix.'wifi_users', $data, $where);
 	}
 }
