@@ -47,13 +47,13 @@ class Dashboard extends REST_Controller {
     $query = "SELECT COUNT(1) as count FROM {$this->tblprefix}allocations WHERE status != 'DEL' ";
     $allAllocations = $this->AllocationsModel->getAllAllocations($query);
 
-    $query = "SELECT COUNT(1) as count FROM {$this->tblprefix}allocations WHERE status != 'NAL' ";
+    $query = "SELECT COUNT(1) as count FROM {$this->tblprefix}allocations WHERE status = 'NAL' ";
     $notAllocated = $this->AllocationsModel->getAllAllocations($query);
 
-    $query = "SELECT COUNT(1) as count FROM {$this->tblprefix}allocations WHERE status != 'ALC' ";
+    $query = "SELECT COUNT(1) as count FROM {$this->tblprefix}allocations WHERE status = 'ALC' ";
     $allocated = $this->AllocationsModel->getAllAllocations($query);
 
-    $query = "SELECT COUNT(1) as count FROM {$this->tblprefix}allocations WHERE status != 'DLY' ";
+    $query = "SELECT COUNT(1) as count FROM {$this->tblprefix}allocations WHERE status = 'DLY' ";
     $delivered = $this->AllocationsModel->getAllAllocations($query);
 
     $query = "SELECT COUNT(1) as count FROM {$this->tblprefix}yards WHERE status = 'A' ";

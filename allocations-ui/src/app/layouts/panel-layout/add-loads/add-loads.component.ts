@@ -33,11 +33,11 @@
  }
 
 @Component({
-  selector: 'app-allocations',
-  templateUrl: './allocations.component.html',
-  styleUrls: ['./allocations.component.scss']
+  selector: 'app-add-loads',
+  templateUrl: './add-loads.component.html',
+  styleUrls: ['./add-loads.component.scss']
 })
-export class AllocationsComponent implements OnInit, OnDestroy {
+export class AddLoadsComponent implements OnInit, OnDestroy {
 
   public isFormLoading: boolean = false;
   public form: FormGroup;
@@ -51,7 +51,7 @@ export class AllocationsComponent implements OnInit, OnDestroy {
     statuses: [],
     maxDate: new Date(),
   };
-  public cardTitle: string = 'Allocations';
+  public cardTitle: string = 'Add Loads';
 
   constructor(
     private formBuilder: FormBuilder,

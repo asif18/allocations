@@ -5,7 +5,7 @@
         <div class="mat-card mat-card-stats">
           <div class="mat-card-header mat-card-header-warning mat-card-header-icon">
             <app-preloader [showPreLoader]="isFormLoading"></app-preloader>
-            <div class="mat-card-icon">
+            <div class="mat-card-icon clickable">
               <fa-icon [icon]="faIcons.faFileContract" size="2x"></fa-icon>
             </div>
             <h3 class="mat-card-title">{{ dashboardData.allAllocationsCount }}</h3>
@@ -13,7 +13,7 @@
           <div class="mat-card-footer">
             <div class="stats">
               <i class="material-icons text-info">star</i>
-              All Allocations
+              All Loads
             </div>
           </div>
         </div>
@@ -22,7 +22,7 @@
         <div class="mat-card mat-card-stats">
           <div class="mat-card-header mat-card-header-success mat-card-header-icon">
             <app-preloader [showPreLoader]="isFormLoading"></app-preloader>
-            <div class="mat-card-icon">
+            <div class="mat-card-icon clickable" (click)="navigate('panel/not-allocated-list')">
               <fa-icon [icon]="faIcons.faTruckPickup" size="2x"></fa-icon>
             </div>
             <h3 class="mat-card-title">{{ dashboardData.notAllocatedCount }}</h3>
@@ -39,7 +39,7 @@
         <div class="mat-card mat-card-stats">
           <div class="mat-card-header mat-card-header-danger mat-card-header-icon">
             <app-preloader [showPreLoader]="isFormLoading"></app-preloader>
-            <div class="mat-card-icon">
+            <div class="mat-card-icon clickable" (click)="navigate('panel/allocated-list')">
               <fa-icon [icon]="faIcons.faTruck" size="2x"></fa-icon>
             </div>
             <h3 class="mat-card-title">{{ dashboardData.allocatedCount }}</h3>
@@ -56,7 +56,7 @@
         <div class="mat-card mat-card-stats">
           <div class="mat-card-header mat-card-header-danger mat-card-header-icon">
             <app-preloader [showPreLoader]="isFormLoading"></app-preloader>
-            <div class="mat-card-icon">
+            <div class="mat-card-icon clickable" (click)="navigate('panel/delivered-list')">
               <fa-icon [icon]="faIcons.faTruckMoving" size="2x"></fa-icon>
             </div>
             <h3 class="mat-card-title">{{ dashboardData.deliveredCount }}</h3>
@@ -73,7 +73,7 @@
         <div class="mat-card mat-card-stats">
           <div class="mat-card-header mat-card-header-warning mat-card-header-icon">
             <app-preloader [showPreLoader]="isFormLoading"></app-preloader>
-            <div class="mat-card-icon">
+            <div class="mat-card-icon clickable" (click)="navigate('panel/yards')">
               <fa-icon [icon]="faIcons.faMapMarkerAlt" size="2x"></fa-icon>
             </div>
             <h3 class="mat-card-title">{{ dashboardData.yardsCount }}</h3>
@@ -90,7 +90,7 @@
         <div class="mat-card mat-card-stats">
           <div class="mat-card-header mat-card-header-success mat-card-header-icon">
             <app-preloader [showPreLoader]="isFormLoading"></app-preloader>
-            <div class="mat-card-icon">
+            <div class="mat-card-icon clickable" (click)="navigate('panel/destinations')">
               <fa-icon [icon]="faIcons.faMapMarkedAlt" size="2x"></fa-icon>
             </div>
             <h3 class="mat-card-title">{{ dashboardData.destinationsCount }}</h3>

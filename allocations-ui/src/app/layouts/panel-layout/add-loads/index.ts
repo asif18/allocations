@@ -10,4 +10,4 @@
  * Email: mohamedasif18@gmail.com
  */
 
-export * from './allocations.component';
+export * from './add-loads.component';

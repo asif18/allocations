@@ -155,7 +155,7 @@ class Auth extends REST_Controller {
   private function getPagesAndRequiredRoles() {
     return array(
       'dashboard'         => [SUPERADMIN, SUPERADMIN_STAFF, STAFF],
-      'allocations'       => [SUPERADMIN, SUPERADMIN_STAFF, STAFF],
+      'addLoads'          => [SUPERADMIN, SUPERADMIN_STAFF, STAFF],
       'notAllocatedList'  => [SUPERADMIN, SUPERADMIN_STAFF, STAFF],
       'allocatedList'     => [SUPERADMIN, SUPERADMIN_STAFF, STAFF],
       'deliveredList'     => [SUPERADMIN, SUPERADMIN_STAFF, STAFF],
@@ -245,9 +245,9 @@ class Auth extends REST_Controller {
         'isSubMenuOpen' => false,
         'subMenus' => array(
           array(
-            'name' => 'allocations',
-            'path' => '/panel/allocations',
-            'caption' => 'Add Allocations',
+            'name' => 'addLoads',
+            'path' => '/panel/add-loads',
+            'caption' => 'Add Loads',
             'icon' => 'photo_filter',
             'class' => '',
             'isDisabled' => false

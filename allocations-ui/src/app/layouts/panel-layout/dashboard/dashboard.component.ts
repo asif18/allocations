@@ -11,6 +11,7 @@
  */
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Title } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { faFileContract, faTruckPickup, faTruck, faTruckMoving, faTruckLoading, faMapMarkerAlt, 
   faMapMarkedAlt } from '@fortawesome/free-solid-svg-icons';
@@ -47,6 +48,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   constructor(
     private titleService: Title,
+    private router: Router,
     private dashboardService: DashboardService) {
     this.titleService.setTitle('Dashboard');
   }
@@ -65,6 +67,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   populateDashboard(responseData: DashboardData): void {
     this.dashboardData = responseData;
+  }
+
+  navigate(path: string) {
+    this.router.navigateByUrl(path);
   }
 
   ngOnDestroy() {

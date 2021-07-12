@@ -23,7 +23,7 @@ import { PanelLayoutRoutes } from './panel-layout.routes';
 import { AuthGuard } from '../../_guards';
 import { MaterialModule } from '../../material.module';
 
-import { AllocationsComponent } from './allocations';
+import { AddLoadsComponent } from './add-loads';
 import { AllocationsListComponent } from './allocations-list';
 import { AllocatedListComponent } from './allocated-list';
 import { DeliveredListComponent } from './delivered-list';
@@ -49,7 +49,7 @@ import { DisableControlDirective, UppercaseControlDirective } from '../../_direc
     PanelLayoutComponent,
     DashboardComponent,
     SettingsComponent,
-    AllocationsComponent,
+    AddLoadsComponent,
     AllocationsListComponent,
     AllocatedListComponent,
     DeliveredListComponent,

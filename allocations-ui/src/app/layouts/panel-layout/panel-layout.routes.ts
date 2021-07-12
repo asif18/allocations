@@ -13,7 +13,7 @@ import { Routes } from '@angular/router';
 import { PanelLayoutComponent } from './panel-layout.component';
 import { DashboardComponent } from './dashboard';
 
-import { AllocationsComponent } from './allocations';
+import { AddLoadsComponent } from './add-loads';
 import { AllocationsListComponent } from './allocations-list';
 import { AllocatedListComponent } from './allocated-list';
 import { DeliveredListComponent } from './delivered-list'
@@ -54,12 +54,12 @@ export const PanelLayoutRoutes: Routes = [
         }
       },
       {
-        path: 'allocations',
-        component: AllocationsComponent,
+        path: 'add-loads',
+        component: AddLoadsComponent,
         canActivate: [AuthGuard],
         data: {
-          title: 'Allocations',
-          pageName: 'allocations'
+          title: 'Add Loads',
+          pageName: 'addLoads'
         }
       },
       {

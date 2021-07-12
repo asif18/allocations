@@ -39,7 +39,7 @@ class Staff extends REST_Controller {
    */
   public function saveStaff_post() {
     $decodedToken = AUTHORIZATION::validateToken();
-    $acceptedKeys = array('role', 'name*', 'email*', 'username*', 'password*');
+    $acceptedKeys = array('role*', 'name*', 'email*', 'username*', 'password*');
     $input = $this->post();
     AUTHORIZATION::validateRequestInput($acceptedKeys, $input);
     $userInfo = AUTHORIZATION::validateUser($decodedToken->id);
@@ -64,7 +64,7 @@ class Staff extends REST_Controller {
     $options = [
       'cost' => 12,
     ];
-    $password = password_hash(base64_decode($input['password']), PASSWORD_BCRYPT, $options);
+    $password = password_hash($input['password'], PASSWORD_BCRYPT, $options);
 
     $insertData = array(
       'parent_id' => $userInfo['id'],

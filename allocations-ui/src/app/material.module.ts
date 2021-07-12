@@ -18,6 +18,8 @@
  import { CdkTableModule } from '@angular/cdk/table';
  import { CdkTreeModule } from '@angular/cdk/tree';
  import { NgModule } from '@angular/core';
+ import { NgxMatDatetimePickerModule, NgxMatTimepickerModule } from '@angular-material-components/datetime-picker';
+ import { NgxMatMomentModule  } from '@angular-material-components/moment-adapter';
  import {
    MatAutocompleteModule,
    MatBadgeModule,
@@ -73,6 +75,9 @@
      MatChipsModule,
      MatStepperModule,
      MatDatepickerModule,
+     NgxMatDatetimePickerModule,
+     NgxMatTimepickerModule, 
+     NgxMatMomentModule,
      MatDialogModule,
      MatDividerModule,
      MatExpansionModule,
@@ -117,6 +122,9 @@
      MatChipsModule,
      MatStepperModule,
      MatDatepickerModule,
+     NgxMatDatetimePickerModule,
+     NgxMatTimepickerModule,
+     NgxMatMomentModule,
      MatDialogModule,
      MatDividerModule,
      MatExpansionModule,

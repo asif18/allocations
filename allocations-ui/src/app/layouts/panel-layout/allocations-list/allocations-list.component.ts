@@ -19,7 +19,6 @@ import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms'
 import { merge, Subscription, noop, of as observableOf, forkJoin } from 'rxjs';
 import { catchError, map, startWith, switchMap, finalize } from 'rxjs/operators';
 import { Title } from '@angular/platform-browser';
-import { Router } from '@angular/router';
 import { faFileExcel, faSearch, faTimes, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import * as _ from 'lodash';
 import { SnackbarService, AllocationsService, DestinationsService, DataShareService, UtilityService, YardsService } 
@@ -68,6 +67,7 @@ export class AllocationsListComponent implements OnInit, AfterViewInit, OnDestro
     'seal_number', 'allocationStatus', 'is_rail_bill', 'createdBy', 'created_datetime', 'edit'];
   public data: Allocations[] = [];
   public isFormLoading: boolean = false;
+  public isAfFormLoading: boolean = false;
   public form: FormGroup;
   public allocationForm: FormGroup;
   public resultsLength = 0;
@@ -354,10 +354,15 @@ export class AllocationsListComponent implements OnInit, AfterViewInit, OnDestro
 
     const ids = _.map(this.selection.selected, (item) => item.id);
     this.af.ids.setValue(ids);
-    this.isFormLoading = true;
-    this.subscriptions.push(this.allocationsService.allocate(this.allocationForm.value)
+    this.isAfFormLoading = true;
+    const payload = {
+      openDate: this.af.openDate.value.format('YYYY-MM-DD hh:mm:ss').toString(),
+      expiryDate: this.af.expiryDate.value.format('YYYY-MM-DD hh:mm:ss').toString(),
+      ids: this.af.ids.value
+    };
+    this.subscriptions.push(this.allocationsService.allocate(payload)
       .pipe(finalize(() => {
-        this.isFormLoading = false;
+        this.isAfFormLoading = false;
         this.allocateModalRef.close();
         this.selection.clear();
         this.enableDisableAllocationButton();
