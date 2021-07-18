@@ -3,17 +3,21 @@
     <div class="row">
       <div class="col-md-12">
         <mat-card class="mat-elevation-z8 mat-card mt-0">
-          <div class="row d-inline-block">
-            <div class="d-inline-block ml-2 border-right pr-1">
-              <div class="form-group text-center">
-                <button matRipple type="button" class="btn btn-sm btn-danger"
-                  [disabled]="formDependencyData.isDeliveryButtonDisabled" (click)="openDeliveryModal()">Mark Delivered</button>
+          <div class="d-flex align-items-center">
+            <div class="ml-2 border-right pr-1">
+              <div>
+                <button matRipple type="button" class="btn btn-sm btn-danger w-100"
+                  [disabled]="formDependencyData.isDeliveryNotAlcButtonDisabled" (click)="openDeliveryModal()">Mark As Delivered</button>
+              </div>
+              <div>
+                <button matRipple type="button" class="btn btn-sm btn-danger w-100"
+                  [disabled]="formDependencyData.isDeliveryNotAlcButtonDisabled" (click)="markAsNotAllocated()">Move to Not Allocated</button>
               </div>
             </div>
 
-            <div class="d-inline-block mb-2 ml-1">
+            <div class="mb-2 ml-1">
               <form [formGroup]="form" (ngSubmit)="onSearchFormSubmit()">
-                <div class="row d-flex align-items-center">
+                <div class="row align-items-center">
                   <div class="col">
                     <mat-form-field>
                       <input matInput placeholder="Container Number" formControlName="containerNumber" uppercase maxlength="11" />
@@ -49,6 +53,11 @@
                       <div class="mr-2 border pl-1 pr-1">
                         <fa-icon [icon]="faIcons.faTimes" size="1x" class="red-a400"
                           (click)="onClearSearch()" matTooltip="Clear Search"></fa-icon>
+                      </div>
+
+                      <div class="mr-2 border pl-1 pr-1" [ngClass]="{'disabled': !data.length}">
+                        <fa-icon [icon]="faIcons.faFileExcel" size="1x" class="purple-900"
+                         (click)="openBottomSheet()" matTooltip="Export as excel"></fa-icon>
                       </div>
                     </div>
                   </div>
@@ -142,7 +151,7 @@
   </div>
 </div>
 
-<ng-template #allocateModal>
+<ng-template #deliveryModal>
   <h2 mat-dialog-title>Mark As Delivered</h2>
   <form [formGroup]="deliveryForm" (ngSubmit)="onDeliveryFormSubmit()">
     <mat-dialog-content>

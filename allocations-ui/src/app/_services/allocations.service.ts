@@ -40,6 +40,10 @@ export class AllocationsService {
   getAllocations(postData: DefaultListApiParams ) {
     return this.http.post<any>(`${environment.apiUrl}/allocations/getAllocations`, postData);
   }
+  
+  getAllocation(id: string) {
+    return this.http.get<any>(`${environment.apiUrl}/allocations/getAllocation/${id}`);
+  }
 
   exportAllocations(postData: DefaultListApiParams): Observable<any> {
     return this.http.post(`${environment.apiUrl}/allocations/getAllocations/export`, postData,
@@ -56,5 +60,9 @@ export class AllocationsService {
 
   markAsDelivered(postData: any): Observable<any> {
     return this.http.post<any>(`${environment.apiUrl}/allocations/markAsDelivered`, postData);
+  }
+
+  markAsNotAllocated(postData: any): Observable<any> {
+    return this.http.post<any>(`${environment.apiUrl}/allocations/markAsNotAllocated`, postData);
   }
 }

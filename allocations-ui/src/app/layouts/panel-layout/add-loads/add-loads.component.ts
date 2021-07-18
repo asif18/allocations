@@ -15,6 +15,8 @@
  import { finalize } from 'rxjs/operators';
  import { ActivatedRoute } from '@angular/router';
  import { Title } from '@angular/platform-browser';
+ import * as _ from 'lodash';
+ import * as moment from 'moment';
  import {
    SnackbarService,
    YardsService,
@@ -22,7 +24,7 @@
    AllocationsService
    } from '../../../_services';
  import { DefaultApiResponse, DefaultListApiParams } from '../../../_models';
- import * as _ from 'lodash';
+
  
  declare interface FormDependencyData {
    destinations: object[];
@@ -43,7 +45,8 @@ export class AddLoadsComponent implements OnInit, OnDestroy {
   public form: FormGroup;
   private submitted = false;
   private subscriptions: Subscription[] = [];
-  public hasRoomIdInUrl: boolean = false;
+  public isEditMode: boolean = false;
+  private encryptedAllocationId: string = null;
   public formDependencyData: FormDependencyData = {
     destinations: [],
     yards: [],
@@ -64,8 +67,21 @@ export class AddLoadsComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.titleService.setTitle('Allocations');
-    this.initForm();
+    this.subscriptions.push(this.route.params.subscribe(params => {
+      this.isEditMode = !!params.id;
+
+      if (this.isEditMode) {
+        this.titleService.setTitle('Edit load');
+        this.cardTitle = 'Edit Load';
+        try {
+          this.encryptedAllocationId = params.id;
+        } catch (error) { this.isEditMode = false; noop(); }
+      } else {
+        this.titleService.setTitle('Add new load');
+      }
+
+      this.initForm();
+    }));
     this.getFormInitialData();
   }
 
@@ -94,11 +110,16 @@ export class AddLoadsComponent implements OnInit, OnDestroy {
           tos: this.allocationsService.getAllTos(),
           maxDate: new Date()
         };
+
+        if (this.isEditMode) {
+          this.getAllocation(this.encryptedAllocationId);
+        }
       }));
   }
 
   private initForm() {
     this.form = this.formBuilder.group({
+      id: new FormControl(null),
       containerNumber: new FormControl(null, {
         validators: [
           Validators.required,
@@ -151,6 +172,28 @@ export class AddLoadsComponent implements OnInit, OnDestroy {
 
   get f() {
     return this.form.controls;
+  }
+
+  private getAllocation(encryptedId: string) {
+    this.isFormLoading = true;
+    this.subscriptions.push(this.allocationsService.getAllocation(encryptedId)
+      .pipe(finalize(() => this.isFormLoading = false))
+      .subscribe((response: DefaultApiResponse) => {
+        if (_.isObject(response.data)) {
+          this.form.patchValue({
+            id: encryptedId,
+            containerNumber: response.data.container_number,
+            destination: response.data.destination_id,
+            yard: response.data.yard_id,
+            to: response.data.to,
+            chassisNumber: response.data.chassis_number,
+            sealNumber: response.data.seal_number,
+            dropDate: moment(response.data.drop_date, 'YYYY-MM-DD').toDate(),
+            allocationStatus: response.data.allocation_status_id,
+            isRailBill: response.data.is_rail_bill
+          });
+        }
+      }));
   }
 
   onSubmit() {

@@ -103,7 +103,7 @@ export class DeliveredListComponent implements OnInit, AfterViewInit, OnDestroy 
       }
 
       const params: DefaultListApiParams =  {
-        searchBy: null,
+        searchBy: this.form.value,
         startFrom: this.paginator.pageIndex,
         endTo: this.paginator.pageIndex + this.paginator.pageSize,
         sortBy: this.sort.active,

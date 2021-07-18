@@ -55,10 +55,14 @@ export const PanelLayoutRoutes: Routes = [
       },
       {
         path: 'add-loads',
+        redirectTo: 'add-loads/'
+      },
+      {
+        path: 'add-loads/:id',
         component: AddLoadsComponent,
         canActivate: [AuthGuard],
         data: {
-          title: 'Add Loads',
+          title: 'Loads',
           pageName: 'addLoads'
         }
       },

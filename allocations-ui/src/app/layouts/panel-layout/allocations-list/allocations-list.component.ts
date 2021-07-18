@@ -21,6 +21,7 @@ import { catchError, map, startWith, switchMap, finalize } from 'rxjs/operators'
 import { Title } from '@angular/platform-browser';
 import { faFileExcel, faSearch, faTimes, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import * as _ from 'lodash';
+import { Router } from '@angular/router';
 import { SnackbarService, AllocationsService, DestinationsService, DataShareService, UtilityService, YardsService } 
   from '../../../_services';
 import { DefaultListApiParams, DefaultApiResponse } from '../../../_models';
@@ -98,6 +99,7 @@ export class AllocationsListComponent implements OnInit, AfterViewInit, OnDestro
     private formBuilder: FormBuilder,
     private snackBar: SnackbarService,
     private dialog: MatDialog,
+    private router: Router,
     private allocationsService: AllocationsService,
     private destinationsService: DestinationsService,
     private yardsService: YardsService) {}
@@ -110,7 +112,7 @@ export class AllocationsListComponent implements OnInit, AfterViewInit, OnDestro
       }
 
       const params: DefaultListApiParams =  {
-        searchBy: null,
+        searchBy: this.form.value,
         startFrom: this.paginator.pageIndex,
         endTo: this.paginator.pageIndex + this.paginator.pageSize,
         sortBy: this.sort.active,
@@ -373,6 +375,10 @@ export class AllocationsListComponent implements OnInit, AfterViewInit, OnDestro
           this.snackBar.show(response.message, response.status ? 'success' : 'danger');
         }
       }, () => noop()));
+  }
+
+  navigate(id: string) {
+    this.router.navigate([`panel/add-loads/${btoa(id)}`]);
   }
 
   ngOnDestroy() {

@@ -53,7 +53,7 @@ declare interface FormDependencyData {
   yards: object[];
   tos: object[];
   statuses: object[];
-  isDeliveryButtonDisabled?: boolean;
+  isDeliveryNotAlcButtonDisabled?: boolean;
 }
 
 @Component({
@@ -78,13 +78,13 @@ export class AllocatedListComponent implements OnInit, AfterViewInit, OnDestroy 
     yards: [],
     tos: [],
     statuses: [],
-    isDeliveryButtonDisabled: true
+    isDeliveryNotAlcButtonDisabled: true
   };
   private onSearch: EventEmitter<any> = new EventEmitter();
   public selection = new SelectionModel<Allocations>(true, []);
-  private allocateModalRef: MatDialogRef<TemplateRef<any>>;
+  private deliveryModalRef: MatDialogRef<TemplateRef<any>>;
   
-  @ViewChild('allocateModal', {static: true}) allocateModal: TemplateRef<any>;
+  @ViewChild('deliveryModal', {static: true}) deliveryModal: TemplateRef<any>;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   @ViewChild('searchInput', {static: true}) searchInput: ElementRef;
@@ -109,7 +109,7 @@ export class AllocatedListComponent implements OnInit, AfterViewInit, OnDestroy 
       }
 
       const params: DefaultListApiParams =  {
-        searchBy: null,
+        searchBy: this.form.value,
         startFrom: this.paginator.pageIndex,
         endTo: this.paginator.pageIndex + this.paginator.pageSize,
         sortBy: this.sort.active,
@@ -281,7 +281,7 @@ export class AllocatedListComponent implements OnInit, AfterViewInit, OnDestroy 
       }
     ];
     this.bottomSheet.open(BottomSheetFileDownloadPromptComponent, {
-      data: {component: 'AllocationsListComponent', items}
+      data: {component: 'AllocatedListComponent', items}
     });
   }
 
@@ -307,7 +307,7 @@ export class AllocatedListComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   private enableDisableDeliveryButton() {
-    this.formDependencyData.isDeliveryButtonDisabled = (_.size(this.selection.selected) === 0);
+    this.formDependencyData.isDeliveryNotAlcButtonDisabled = (_.size(this.selection.selected) === 0);
   }
 
   public deleteAllocation(id: string) {
@@ -315,7 +315,7 @@ export class AllocatedListComponent implements OnInit, AfterViewInit, OnDestroy 
       data:{
         message: 'Are you sure want to delete?',
         buttonText: {
-          ok: 'Save',
+          ok: 'Yes',
           cancel: 'No'
         }
       }
@@ -336,8 +336,35 @@ export class AllocatedListComponent implements OnInit, AfterViewInit, OnDestroy 
     }));
   }
 
+  public markAsNotAllocated() {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data:{
+        message: 'Are you sure want to move as not allocated?',
+        buttonText: {
+          ok: 'Yes',
+          cancel: 'No'
+        }
+      }
+    });
+
+    this.subscriptions.push(dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        this.isFormLoading = true;
+        const ids = _.map(this.selection.selected, (item) => item.id);
+        const promise = this.allocationsService.markAsNotAllocated({ ids });
+        this.subscriptions.push(promise.pipe(finalize(() => this.isFormLoading = false))
+          .subscribe((response: DefaultApiResponse) => {
+            if (response) {
+              this.onSearch.emit(null);
+              this.snackBar.show(response.message, response.status ? 'success' : 'danger');
+            }
+          }, () => noop()));
+      }
+    }));
+  }
+
   public openDeliveryModal(): void {
-    this.allocateModalRef = this.dialog.open(this.allocateModal);
+    this.deliveryModalRef = this.dialog.open(this.deliveryModal);
     this.initDeliveryForm();
   }
 
@@ -352,7 +379,7 @@ export class AllocatedListComponent implements OnInit, AfterViewInit, OnDestroy 
     this.subscriptions.push(this.allocationsService.markAsDelivered(this.deliveryForm.value)
       .pipe(finalize(() => {
         this.isFormLoading = false;
-        this.allocateModalRef.close();
+        this.deliveryModalRef.close();
         this.selection.clear();
         this.enableDisableDeliveryButton();
         this.onSearch.emit(this.form.value);

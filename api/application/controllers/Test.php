@@ -26,7 +26,7 @@ class Test extends CI_Controller {
     echo $pass = password_hash('admin', PASSWORD_BCRYPT, $options);
     echo '<br/>';
     echo password_verify('admin', $pass);
-
+    phpinfo();
     echo $this->forgotPasswordEmailTemplate('name', '2114');
  }
 

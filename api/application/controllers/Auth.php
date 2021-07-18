@@ -247,7 +247,7 @@ class Auth extends REST_Controller {
           array(
             'name' => 'addLoads',
             'path' => '/panel/add-loads',
-            'caption' => 'Add Loads',
+            'caption' => 'Loads',
             'icon' => 'photo_filter',
             'class' => '',
             'isDisabled' => false

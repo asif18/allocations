@@ -41,7 +41,7 @@ class Allocations extends REST_Controller {
    */
   public function saveAllocation_post() {
     $decodedToken = AUTHORIZATION::validateToken();
-    $acceptedKeys = array('containerNumber*', 'destination*', 'yard*', 'to*', 'chassisNumber*', 'sealNumber*', 
+    $acceptedKeys = array('id*', 'containerNumber*', 'destination*', 'yard*', 'to*', 'chassisNumber*', 'sealNumber*', 
       'dropDate*', 'allocationStatus*', 'isRailBill*');
     $input = $this->post();
     AUTHORIZATION::validateRequestInput($acceptedKeys, $input);
@@ -60,6 +60,10 @@ class Allocations extends REST_Controller {
       WHERE 
         container_number = '{$input['containerNumber']}'
         AND (status = 'NAL' OR status = 'ALC')";
+    
+    if ($input['id'] != null) {
+      $query.= " AND id != ".base64_decode($input['id']);
+    }
 
     
     $isExist = $this->AllocationsModel->getAllAllocations($query);
@@ -73,7 +77,7 @@ class Allocations extends REST_Controller {
       $this->response($output, $httpCode);
     }
 
-    $insertData = array(
+    $data = array(
       'container_number'      => $input['containerNumber'],
       'destination_id'        => $input['destination'],
       'yard_id'               => $input['yard'],
@@ -82,15 +86,25 @@ class Allocations extends REST_Controller {
       'seal_number'           => $input['sealNumber'],
       'drop_date'             => $input['dropDate'],
       'allocation_status_id'  => $input['allocationStatus'],
-      'is_rail_bill'          => $input['isRailBill'],
-      'status'                => 'NAL',
-      'created_by'            => $userInfo['id'],
-      'datetime'              => $this->timenow
+      'is_rail_bill'          => $input['isRailBill']
     );
 
-    $allocationId = $this->AllocationsModel->insertAllocation($insertData);
+    if ($input['id'] != null) {
+      $data['last_updated_by'] = $userInfo['id'];
+      $data['last_updated_on'] = $this->timenow;
+
+      $allocationId = base64_decode($input['id']);
+      $this->AllocationsModel->updateAllocation($data, array('id' => $allocationId));
+      log_message('info', 'saveAllocation_post allocation updated - '.$allocationId);
+    } else {
+      $data['status'] = 'NAL';
+      $data['created_by'] = $userInfo['id'];
+      $data['datetime'] = $this->timenow;
+      $allocationId = $this->AllocationsModel->insertAllocation($data);
+      log_message('info', 'saveAllocation_post new allocation created - '.$allocationId);
+    }
     
-    log_message('info', 'saveAllocation_post new allocation created - '.$allocationId);
+    
     $output = array(
       'status' => true,
       'message' => 'saved successfully');
@@ -220,6 +234,44 @@ class Allocations extends REST_Controller {
   }
 
   /**
+   * URL: /allocations/markAsNotAllocated
+   * Method: POST
+   */
+  public function markAsNotAllocated_post() {
+    $decodedToken = AUTHORIZATION::validateToken();
+    $acceptedKeys = array('ids*');
+    $input = $this->post();
+    AUTHORIZATION::validateRequestInput($acceptedKeys, $input);
+    $userInfo = AUTHORIZATION::validateUser($decodedToken->id);
+
+    if ($userInfo['role'] !==  SUPERADMIN && $userInfo['role'] !== SUPERADMIN_STAFF && $userInfo['role'] !== STAFF) {
+      $output = array('status' => false);
+      $httpCode = REST_Controller::HTTP_UNAUTHORIZED;
+      $this->response($output, $httpCode);
+    }
+
+    $updateData = array(
+      'delivery_date'       => null,
+      'status'              => 'NAL',
+      'last_updated_by'     => $userInfo['id'],
+      'last_updated_on'     => $this->timenow,
+      'delivery_updated_by' => null,
+      'delivery_updated_on' => null
+    );
+
+    foreach ($input['ids'] as $id) {
+      $this->AllocationsModel->updateAllocation($updateData, array('id' => $id));
+      log_message('info', 'markAsNotAllocated_post allocation - '.$id);
+    }
+    
+    $output = array(
+      'status' => true,
+      'message' => 'moved to not allocated list');
+    $httpCode = REST_Controller::HTTP_OK;
+    $this->response($output, $httpCode);
+  }
+
+  /**
    * URL: /allocations/getAllocationStatuses
    * Method: POST
    */
@@ -263,6 +315,56 @@ class Allocations extends REST_Controller {
   }
 
   /**
+   * URL: /allocations/getAllocation
+   * Method: GET
+   */
+  public function getAllocation_get($id = null) {
+    log_message('info', 'getAllocation_get');
+    $decodedToken = AUTHORIZATION::validateToken();
+    $userInfo = AUTHORIZATION::validateUser($decodedToken->id);
+
+    $id = base64_decode($id);
+    $id = (int)$this->security->xss_clean($id);
+
+    if (!is_numeric($id)) {
+      $httpCode = REST_Controller::HTTP_BAD_REQUEST;
+      $output = array('status' => false);
+      $this->response($output, $httpCode);
+    }
+
+    $query = "SELECT
+      container_number,
+      destination_id,
+      yard_id, 
+      `to`, 
+      chassis_number, 
+      seal_number, 
+      drop_date, 
+      is_rail_bill, 
+      allocation_status_id 
+      FROM
+        {$this->tblprefix}allocations
+      WHERE 
+        id = '{$id}'";
+
+    $allocation = $this->AllocationsModel->getAllAllocations($query)[0];
+
+    if (count($allocation) <= 0) {
+      $httpCode = REST_Controller::HTTP_BAD_REQUEST;
+      $output = array('status' => false);
+      $this->response($output, $httpCode);
+    }
+
+    $allocation['is_rail_bill'] = $this->utility->parseTinyIntToBoolean($allocation['is_rail_bill']);
+    
+    $httpCode = REST_Controller::HTTP_OK;
+    $output = array(
+      'status' => true,
+      'data' => $allocation);
+    $this->response($output, $httpCode);
+  }
+
+  /**
    * URL: /allocations/getAllocations
    * Method: POST
    */
@@ -298,17 +400,21 @@ class Allocations extends REST_Controller {
       al.status, 
       u.name AS createdBy, 
       ud.name AS deliveryUpdatedBy, 
-      al.datetime  AS created_datetime
+      al.delivery_updated_on, 
+      al.last_updated_on, 
+      ul.name AS lastUpdatedBy, 
+      al.datetime  AS created_datetime 
       FROM
         {$this->tblprefix}allocations al 
         LEFT JOIN {$this->tblprefix}destinations ds ON ds.id = al.destination_id 
         LEFT JOIN {$this->tblprefix}yards ys ON ys.id = al.yard_id 
         LEFT JOIN {$this->tblprefix}allocation_statuses asd ON asd.id = al.allocation_status_id 
         LEFT JOIN {$this->tblprefix}users u ON u.id = al.created_by 
-        LEFT JOIN {$this->tblprefix}users ud ON ud.id = al.delivery_updated_by AND al.delivery_updated_by IS NOT NULL
-      WHERE ");
+        LEFT JOIN {$this->tblprefix}users ud ON ud.id = al.delivery_updated_by AND al.delivery_updated_by IS NOT NULL 
+        LEFT JOIN {$this->tblprefix}users ul ON ul.id = al.last_updated_by AND al.last_updated_by IS NOT NULL");
 
     if (is_array($input['searchBy'])) {
+      array_push($query, " WHERE ");
       if (strlen($input['searchBy']['status']) > 0) {
         array_push($query, "al.status = '{$input['searchBy']['status']}' ");
       }
@@ -350,10 +456,20 @@ class Allocations extends REST_Controller {
       $sheet->setCellValue('F1', 'To');
       $sheet->setCellValue('G1', 'Chassis#');
       $sheet->setCellValue('H1', 'Seal#');
-      $sheet->setCellValue('I1', 'Delivery Date');
-      $sheet->setCellValue('J1', 'Allocation Status');
-      $sheet->setCellValue('K1', 'created By');
-      $sheet->setCellValue('L1', 'Created On');
+      $sheet->setCellValue('I1', 'IsRailBill');
+      $sheet->setCellValue('J1', 'Alocation Status');
+      $sheet->setCellValue('K1', 'Status');
+      $sheet->setCellValue('L1', 'Drop Date');
+      $sheet->setCellValue('M1', 'Delivery Date');
+      $sheet->setCellValue('N1', 'Open Date');
+      $sheet->setCellValue('O1', 'Expiry Date');
+      $sheet->setCellValue('P1', 'Allocation Status');
+      $sheet->setCellValue('Q1', 'Delivery Updated By');
+      $sheet->setCellValue('R1', 'Delivery Updated On');
+      $sheet->setCellValue('S1', 'Created By');
+      $sheet->setCellValue('T1', 'Created On');
+      $sheet->setCellValue('U1', 'Last Updated By');
+      $sheet->setCellValue('V1', 'Last Updated On');
       $rows = 2;
       foreach ($allocations as $val){
         $sheet->setCellValue('A' . $rows, $val['container_number']);
@@ -364,10 +480,20 @@ class Allocations extends REST_Controller {
         $sheet->setCellValue('F' . $rows, $val['to']);
         $sheet->setCellValue('G' . $rows, $val['chassis_number']);
         $sheet->setCellValue('H' . $rows, $val['seal_number']);
-        $sheet->setCellValue('I' . $rows, $val['delivery_date']);
+        $sheet->setCellValue('I' . $rows, $val['is_rail_bill']);
         $sheet->setCellValue('J' . $rows, $val['allocationStatus']);
-        $sheet->setCellValue('K' . $rows, $val['createdBy']);
-        $sheet->setCellValue('L' . $rows, $val['datetime']);
+        $sheet->setCellValue('K' . $rows, $val['status']);
+        $sheet->setCellValue('L' . $rows, $val['drop_date']);
+        $sheet->setCellValue('M' . $rows, $val['delivery_date']);
+        $sheet->setCellValue('N' . $rows, $val['open_date']);
+        $sheet->setCellValue('O' . $rows, $val['expiry_date']);
+        $sheet->setCellValue('P' . $rows, $val['allocationStatus']);
+        $sheet->setCellValue('Q' . $rows, $val['deliveryUpdatedBy']);
+        $sheet->setCellValue('R' . $rows, $val['delivery_updated_on']);
+        $sheet->setCellValue('S' . $rows, $val['createdBy']);
+        $sheet->setCellValue('T' . $rows, $val['created_datetime']);
+        $sheet->setCellValue('U' . $rows, $val['lastUpdatedBy']);
+        $sheet->setCellValue('V' . $rows, $val['last_updated_on']);
         $rows++;
       }
       $fileName = $this->utility->generateRandomString('allocations-export-sheet-'.date('dmY')) . '.xlsx';

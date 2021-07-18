@@ -59,6 +59,11 @@
                         <fa-icon [icon]="faIcons.faTimes" size="1x" class="red-a400"
                           (click)="onClearSearch()" matTooltip="Clear Search"></fa-icon>
                       </div>
+
+                      <div class="mr-2 border pl-1 pr-1" [ngClass]="{'disabled': !data.length}">
+                        <fa-icon [icon]="faIcons.faFileExcel" size="1x" class="purple-900"
+                         (click)="openBottomSheet()" matTooltip="Export as excel"></fa-icon>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -150,9 +155,19 @@
               <ng-container matColumnDef="edit">
                 <th mat-header-cell *matHeaderCellDef>Action</th>
                 <td mat-cell *matCellDef="let element" class="text-center">
-                  <button mat-icon-button (click)="deleteAllocation(element.id)">
-                    <fa-icon [icon]="faIcons.faTrashAlt" size="1x" class="red-a400" matTooltip="Delete"></fa-icon>
+                  <button mat-icon-button [matMenuTriggerFor]="menu">
+                    <mat-icon>more_vert</mat-icon>
                   </button>
+                  <mat-menu #menu="matMenu">
+                    <button mat-menu-item color="warn" (click)="navigate(element.id)">
+                      <mat-icon>edit</mat-icon>
+                      <span>Edit</span>
+                    </button>
+                    <button mat-menu-item color="warn" (click)="deleteAllocation(element.id)">
+                      <mat-icon>delete</mat-icon>
+                      <span>Delete</span>
+                    </button>
+                  </mat-menu>
                 </td>
               </ng-container>
 

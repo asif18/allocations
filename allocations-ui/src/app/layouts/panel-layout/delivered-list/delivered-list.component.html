@@ -43,6 +43,11 @@
                         <fa-icon [icon]="faIcons.faTimes" size="1x" class="red-a400"
                           (click)="onClearSearch()" matTooltip="Clear Search"></fa-icon>
                       </div>
+
+                      <div class="mr-2 border pl-1 pr-1" [ngClass]="{'disabled': !data.length}">
+                        <fa-icon [icon]="faIcons.faFileExcel" size="1x" class="purple-900"
+                         (click)="openBottomSheet()" matTooltip="Export as excel"></fa-icon>
+                      </div>
                     </div>
                   </div>
                 </div>
